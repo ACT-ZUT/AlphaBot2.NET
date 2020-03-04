@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlphaBot2", "AlphaBot2\AlphaBot2.csproj", "{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|linux-arm = Debug|linux-arm
+		Debug|x64 = Debug|x64
+		Release|linux-arm = Release|linux-arm
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|linux-arm.Build.0 = Debug|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|x64.Build.0 = Debug|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|linux-arm.ActiveCfg = Release|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|linux-arm.Build.0 = Release|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|x64.ActiveCfg = Release|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68586663-838B-4F9A-B77A-8DBD3ED25158}
+	EndGlobalSection
+EndGlobal
