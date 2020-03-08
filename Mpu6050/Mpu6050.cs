@@ -16,17 +16,17 @@ using Iot.Units;
 namespace Iot.Device.Imu
 {
     /// <summary>
-    ///  MPU9250 class. MPU6500 has an embedded gyroscope, accelerometer and temperature.
+    ///  MPU6050 class. MPU6050 has an embedded gyroscope, accelerometer and temperature.
     /// </summary>
     public class Mpu6050 : IDisposable
     {
         /// <summary>
-        /// Default address for MPU9250
+        /// Default address for MPU6050
         /// </summary>
         public const byte DefaultI2cAddress = 0x68;
 
         /// <summary>
-        /// Second address for MPU9250
+        /// Second address for MPU6050
         /// </summary>
         public const byte SecondI2cAddress = 0x69;
 
@@ -42,7 +42,7 @@ namespace Iot.Device.Imu
         internal bool _wakeOnMotion;
 
         /// <summary>
-        /// Initialize the MPU6500
+        /// Initialize the MPU6050
         /// </summary>
         /// <param name="i2cDevice">The I2C device</param>
         public Mpu6050(I2cDevice i2cDevice)
@@ -62,7 +62,7 @@ namespace Iot.Device.Imu
         }
 
         /// <summary>
-        /// Used to create the class for the MPU9250. Initialization is a bit different than for the MPU65000
+        /// Used to create the class for the MPU9250. Initialization is a bit different than for the MPU6050
         /// </summary>
         internal Mpu6050()
         {
@@ -413,7 +413,7 @@ namespace Iot.Device.Imu
         }
 
         /// <summary>
-        /// Return true if the version of MPU6500 is the correct one
+        /// Return true if the version of MPU6050 is the correct one
         /// </summary>
         /// <returns>True if success</returns>
         internal bool CheckVersion()

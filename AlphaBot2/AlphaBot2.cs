@@ -42,7 +42,7 @@ namespace AlphaBot2
             imu = new Mpu6050(I2cDevice.Create(new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
         }
 
-        public void Test()
+        public void MotorTest()
         {
             const double Period = 20.0;
 
