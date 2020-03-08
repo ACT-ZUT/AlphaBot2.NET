@@ -10,8 +10,7 @@ namespace AlphaBot2
         static void Main(string[] args)
         {
             Console.WriteLine("AlphaBot2.NET");
-            Console.WriteLine("ver 0.1.0, ACT Science Club");
-            Console.WriteLine("SaDiablo");
+            Console.WriteLine("ver 0.2.0, ACT Science Club");
 
             var Robot = new AlphaBot2();
             Robot.ImuTest();

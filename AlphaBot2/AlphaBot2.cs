@@ -32,14 +32,14 @@ namespace AlphaBot2
         DCMotor motorR;
         Hcsr04 sonar;
         CpuTemperature cpuTemperature = new CpuTemperature();
-        Mpu6500 imu;
+        Mpu6050 imu;
 
         public AlphaBot2()
         {
             motorL = DCMotor.Create(6, 12, 13);
             motorR = DCMotor.Create(new SoftwarePwmChannel(26, 400, usePrecisionTimer: true), 20, 21);
             sonar = new Hcsr04(22, 27);
-            imu = new Mpu6500(I2cDevice.Create(new I2cConnectionSettings(1, Mpu6500.DefaultI2cAddress)));
+            imu = new Mpu6050(I2cDevice.Create(new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
         }
 
         public void Test()
@@ -82,7 +82,7 @@ namespace AlphaBot2
             Console.WriteLine($"Temp = {temp.Celsius.ToString("0.00")} °C");
         }
 
-        ~AlphaBot()
+        ~AlphaBot2()
         {
             motorL.Dispose();
             motorR.Dispose();

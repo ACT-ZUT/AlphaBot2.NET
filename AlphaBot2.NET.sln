@@ -5,22 +5,42 @@ VisualStudioVersion = 16.0.29503.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AlphaBot2", "AlphaBot2\AlphaBot2.csproj", "{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mpu6050", "Mpu6050\Mpu6050.csproj", "{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|linux-arm = Debug|linux-arm
 		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
 		Release|linux-arm = Release|linux-arm
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
 		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|linux-arm.Build.0 = Debug|Any CPU
 		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|x64.ActiveCfg = Debug|Any CPU
 		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Debug|x64.Build.0 = Debug|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|linux-arm.ActiveCfg = Release|Any CPU
 		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|linux-arm.Build.0 = Release|Any CPU
 		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|x64.ActiveCfg = Release|Any CPU
 		{F3851E68-94CB-4BF0-9E90-3A856FEAFCB5}.Release|x64.Build.0 = Release|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Debug|linux-arm.Build.0 = Debug|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Debug|x64.Build.0 = Debug|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Release|linux-arm.ActiveCfg = Release|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Release|linux-arm.Build.0 = Release|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Release|x64.ActiveCfg = Release|Any CPU
+		{7E99EE42-74DB-43A4-ADBE-75A88FA8D3E7}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
