@@ -339,7 +339,8 @@ namespace Iot.Device.Imu
             };
             ReadBytes(Register.TEMP_OUT_H, rawData);
             // formula from the documentation
-            return Temperature.FromCelsius((BinaryPrimitives.ReadInt16BigEndian(rawData) - 21) / 333.87 + 21);
+            // return Temperature.FromCelsius((BinaryPrimitives.ReadInt16BigEndian(rawData) - 21) / 333.87 + 21);
+            return Temperature.FromCelsius(BinaryPrimitives.ReadInt16BigEndian(rawData)/ 340 + 36.53);
         }
 
         #endregion
