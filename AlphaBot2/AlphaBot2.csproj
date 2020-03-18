@@ -2,9 +2,9 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
-    <Version>0.1.0</Version>
-    <Authors>SaDiablo</Authors>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Version>0.2.1</Version>
+    <Authors>ACT</Authors>
     <Company>SKN ACT</Company>
     <Platforms>AnyCPU</Platforms>
     <PackageId>AlphaBot2.NET</PackageId>
@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Mpu6050\Mpu6050.csproj" />
+    <ProjectReference Include="..\Tlc1543\Tlc1543.csproj" />
   </ItemGroup>
 
 </Project>
