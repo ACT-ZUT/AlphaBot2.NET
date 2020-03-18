@@ -13,7 +13,40 @@ namespace AlphaBot2
             Console.WriteLine("ver 0.2.1, ACT Science Club");
 
             var Robot = new AlphaBot2();
-            Robot.ImuTest();
+            if (args.Length != 0)
+            {
+                int delay = 0;
+                if (args.Length > 1) delay = Convert.ToInt32(args[1]);
+
+                Console.WriteLine("Debug");
+                Console.WriteLine($"length: {args.Length}");
+                foreach (var item in args) Console.WriteLine($"{item}");
+                Console.WriteLine($"delay: {delay}");
+                Console.WriteLine("");
+
+                switch (args[0])
+                {
+                    case "camera":
+                        //Robot.CameraTest();
+                        break;
+                    case "imu":
+                        if (delay != 0) Robot.ImuTest(delay);
+                        else Robot.ImuTest();
+                        break;
+                    case "motor":
+                        if (delay != 0) Robot.MotorTest(delay);
+                        else Robot.MotorTest();
+                        break;
+                    case "adc":
+                        if (delay != 0) Robot.AdcTest(delay);
+                        else Robot.AdcTest();
+                        break;
+                }
+            }
+            else
+            {
+                Console.WriteLine("Default Case:");
+            }
 
             Console.CancelKeyPress += (o, e) =>
             {
