@@ -11,6 +11,13 @@ namespace AlphaBot2
         {
             Console.WriteLine("AlphaBot2.NET");
             Console.WriteLine("ver 0.2.1, ACT Science Club");
+            Console.WriteLine("Waiting for remote debugger...");
+            while (true)
+            {
+                if (Debugger.IsAttached) break;
+                Thread.Sleep(1000);
+            }
+            Thread.Sleep(1000);
 
             var Robot = new AlphaBot2();
             if (args.Length != 0)
