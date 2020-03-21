@@ -3,11 +3,13 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <Version>0.2.1</Version>
-    <Authors>ACT</Authors>
-    <Company>SKN ACT</Company>
+    <Company>ACT Science Club</Company>
     <Platforms>AnyCPU</Platforms>
     <PackageId>AlphaBot2.NET</PackageId>
+    <AssemblyVersion>0.3.*</AssemblyVersion>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+    <Deterministic>false</Deterministic>
+    <Version>0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>

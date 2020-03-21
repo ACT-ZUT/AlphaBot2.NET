@@ -27,7 +27,7 @@ namespace Iot.Device.Adc
 		public byte CS, DOUT, ADDR, IOCLK, numSensors;
 		public int calibratedMin, calibratedMax;
 		public SortedList<byte, uint> last_values = new SortedList<byte, uint>();
-		//public SortedList<byte, uint> values = new SortedList<byte, uint>();
+		public SortedList<byte, uint> values = new SortedList<byte, uint>();
 
 		/// <summary>
 		/// the number of single ended input channel on the ADC
@@ -35,9 +35,9 @@ namespace Iot.Device.Adc
 		public Tlc1543 (byte CS, byte DOUT, byte ADDR, byte IOCLK, byte numSensors)
 		{
 			this.numSensors = numSensors;
-			for (byte i = 0; i < numSensors + 1; i++)
+			for (byte i = 0; i < numSensors; i++)
 			{
-				//values.Add(i, 0);
+				values.Add(i, 0);
 				last_values.Add(i, 0);
 			}
 			this.calibratedMin = 0 * numSensors;
@@ -65,12 +65,12 @@ namespace Iot.Device.Adc
 		/// </summary>
 		public SortedList<byte, uint> AnalogRead()
 		{
-			SortedList<byte, uint> values = new SortedList<byte, uint>(numSensors);
-			for (byte i = 0; i < numSensors + 1; i++)
+			//SortedList<byte, uint> values = new SortedList<byte, uint>(numSensors);
+			for (byte i = 0; i < numSensors; i++)
 			{
-				values.Add(i, 0);
+				values[i] = 0;
 			}
-			for (byte j = 0; j < numSensors + 1; j++)
+			for (byte j = 0; j < numSensors; j++)
 			{
 				digital.Write(CS, 0);
 				for (int i = 0; i < 4; i++)
@@ -107,6 +107,7 @@ namespace Iot.Device.Adc
 				Thread.Sleep(TimeSpan.FromMilliseconds(0.1));
 				digital.Write(IOCLK, 1);
 			}
+			last_values = values;
 			return values;
 		}
 

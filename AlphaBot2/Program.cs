@@ -2,6 +2,8 @@
 using System.Drawing;
 using System.Diagnostics;
 using System.Threading;
+using System.Reflection;
+using System.Globalization;
 
 namespace AlphaBot2
 {
@@ -9,8 +11,19 @@ namespace AlphaBot2
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("AlphaBot2.NET");
-            Console.WriteLine("ver 0.2.1, ACT Science Club");
+            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
+            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
+
+            Console.WriteLine($"{typeof(AlphaBot2).Assembly.GetName().Name}");
+            Console.WriteLine($"ACT Science Club");
+            Console.WriteLine($"{typeof(AlphaBot2).Assembly.GetName().ProcessorArchitecture}");
+            Console.WriteLine($"Version: {version}");
+            Console.WriteLine($"Build Date: {buildDate}");
+
+#if DEBUG
+            Console.WriteLine("Configuration: Debug");
             Console.WriteLine("Waiting for remote debugger...");
             while (true)
             {
@@ -18,22 +31,20 @@ namespace AlphaBot2
                 Thread.Sleep(1000);
             }
             Thread.Sleep(1000);
+#else
+            Console.WriteLine("Configuration: Release");
+#endif
 
             var Robot = new AlphaBot2();
             if (args.Length != 0)
             {
-                int delay = 0;
-                if (args.Length > 1) delay = Convert.ToInt32(args[1]);
-
-                Console.WriteLine("Debug");
-                Console.WriteLine($"length: {args.Length}");
-                foreach (var item in args) Console.WriteLine($"{item}");
-                Console.WriteLine($"delay: {delay}");
-                Console.WriteLine("");
+                double delay = 0;
+                if (args.Length > 1) delay = Convert.ToDouble(args[1]);
 
                 switch (args[0])
                 {
                     case "camera":
+
                         //Robot.CameraTest();
                         break;
                     case "imu":

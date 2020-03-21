@@ -18,6 +18,8 @@ using Iot.Device.Adc;
 using System.Device.Gpio;
 
 using Filters;
+using System.IO;
+using System.Reflection;
 
 namespace AlphaBot2
 {
@@ -39,6 +41,7 @@ namespace AlphaBot2
         Mpu6050 imu;
         Tlc1543 adc;
         Kalman filter_imu;
+        StringBuilder csv = new StringBuilder();
 
         public AlphaBot2()
         {
@@ -48,15 +51,18 @@ namespace AlphaBot2
             //imu = new Mpu6050(I2cDevice.Create(new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
         }
 
-        public void MotorTest(int delay = 1)
+        public void MotorTest(double delay = 1)
         {
             const double Period = 20.0;
 
             Console.WriteLine($"Motor Test");
             Stopwatch sw = Stopwatch.StartNew();
             string lastSpeedDisp = null;
+            
+
             while (sw.ElapsedMilliseconds < (Math.PI * 2000))
             {
+                
                 double time = sw.ElapsedMilliseconds / 1000.0;
 
                 // Note: range is from -1 .. 1 (for 1 pin setup 0 .. 1)
@@ -69,12 +75,12 @@ namespace AlphaBot2
                     Console.WriteLine(disp);
                 }
 
-                Thread.Sleep(delay);
+                Thread.Sleep((int)delay);
             }
 
         }
 
-        public void ImuTest(int delay = 100)
+        public void ImuTest(double delay = 100)
         {
             Console.WriteLine($"IMU Test");
             imu = new Mpu6050(I2cDevice.Create(new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
@@ -83,70 +89,88 @@ namespace AlphaBot2
             Kalman ax = new Kalman(), ay = new Kalman(), az = new Kalman();
             Kalman ax1 = new Kalman(), ay1 = new Kalman(), az1 = new Kalman();
             Stopwatch sw = Stopwatch.StartNew();
+            var freq = (double)Stopwatch.Frequency;
+            Debug csv = new Debug();
+            Debug csv_filtered = new Debug();
 
-            
-            Console.WriteLine($"Bias = {imu.RunGyroscopeAccelerometerSelfTest()}");
-            Console.WriteLine($"Bias = {imu.CalibrateGyroscopeAccelerometer()}");
-            float time;
-            float last_time = 0;
-            
-            while (false)
+            string separator = ",";
+            string line = "T, Acc X, Acc Y, Acc Z, Gyro X, Gyro Y, Gyro Z, Temp" + Environment.NewLine;
+            string line_filtered = "T, Acc X, Acc Y, Acc Z, Gyro X, Gyro Y, Gyro Z, Temp" + Environment.NewLine;
+            csv.CSV_Write("testdata", line);
+            csv_filtered.CSV_Write("testdata_filtered", line_filtered);
+
+            Console.WriteLine("Run Gyroscope and Accelerometer Self Test:");
+            Console.WriteLine($"{imu.RunGyroscopeAccelerometerSelfTest()}");
+
+            //Console.WriteLine("Calibrate Gyroscope and Accelerometer:");
+            //Console.WriteLine($"{imu.CalibrateGyroscopeAccelerometer()}");
+            double time;
+            double last_time = 0;
+
+            while (true)
             {
-                //var gyro = imu.GetGyroscopeReading();
-                //Console.Write($"Gyro ");
-                //Console.Write($"X: {gyro.X, 6:N3} ");
-                //Console.Write($"Y: {gyro.Y, 6:N3} ");
-                //Console.Write($"Z: {gyro.Z, 6:N3} ");
-                //Console.Write($"Gyro filtered ");
-                //Console.Write($"X: {gx.getFilteredValue(gyro.X), 6:N3} ");
-                //Console.Write($"Y: {gy.getFilteredValue(gyro.Y), 6:N3} ");
-                //Console.Write($"Z: {gz.getFilteredValue(gyro.Z), 6:N3} ");
-
-                time = sw.ElapsedMilliseconds;
+                time = ((double)sw.ElapsedTicks / freq) * 1000;
                 if (time - last_time >= delay)
                 {
-                    Console.Write($"T: {time - last_time} ");
                     System.Numerics.Vector3 acc = imu.GetAccelerometer();
-
-                    Console.Write($" Acc ");
-
-                    Console.Write($"  X: ");
-                    Console.Write($"{acc.X,6:N2} ");
-                    Console.Write($"{ax.getFilteredValue(acc.X),6:N2} ");
-                    Console.Write($"{ax1.getFilteredValue(Math.Round(acc.X, 3)),6:N2} ");
-
-                    Console.Write($"  Y: ");
-                    Console.Write($"{acc.Y,6:N2} ");
-                    Console.Write($"{ay.getFilteredValue(acc.Y),6:N2} ");
-                    Console.Write($"{ay1.getFilteredValue(Math.Round(acc.Y, 3)),6:N2} ");
-
-                    Console.Write($"  Z: ");
-                    Console.Write($"{acc.Z,6:N2} ");
-                    Console.Write($"{az.getFilteredValue(acc.Z),6:N2} ");
-                    Console.Write($"{az1.getFilteredValue(Math.Round(acc.Z, 3)),6:N2} ");
-
                     System.Numerics.Vector3 gyro = imu.GetGyroscopeReading();
+                    var temp = imu.GetTemperature();
+
+                    Console.Write($"T: {(time - last_time):F12} ");
+                    line = $"{time:F12}" + separator;
+                    line_filtered = $"{time:F12}" + separator;
+
+                    Console.Write($"Acc");
+
+                    Console.Write($" X: ");
+                    Console.Write($"{acc.X,6:F2} ");
+                    Console.Write($"{ax.getFilteredValue(acc.X),6:F2} ");
+                    line += $"{acc.X,6:F2}" + separator;
+                    line_filtered += $"{ax.getFilteredValue(acc.X),6:F2}" + separator;
+
+                    Console.Write($" Y: ");
+                    Console.Write($"{acc.Y,6:F2} ");
+                    Console.Write($"{ay.getFilteredValue(acc.Y),6:F2} ");
+                    line += $"{acc.Y,6:F2}" + separator;
+                    line_filtered += $"{ay.getFilteredValue(acc.Y),6:F2}" + separator;
+
+                    Console.Write($" Z: ");
+                    Console.Write($"{acc.Z,6:F2} ");
+                    Console.Write($"{az.getFilteredValue(acc.Z),6:F2} ");
+                    line += $"{acc.Z,6:F2}" + separator;
+                    line_filtered += $"{az.getFilteredValue(acc.Z),6:F2}" + separator;
+                   
                     Console.Write($" Gyro ");
 
-                    Console.Write($"  X: ");
-                    Console.Write($"{gyro.X,7:N2} ");
-                    Console.Write($"{gx.getFilteredValue(gyro.X),7:N2} ");
-                    Console.Write($"{gx1.getFilteredValue(Math.Round(gyro.X, 3)),7:N2} ");
+                    Console.Write($" X: ");
+                    Console.Write($"{gyro.X,8:F2} ");
+                    Console.Write($"{gx.getFilteredValue(gyro.X),8:F2} ");
+                    line += $"{gyro.X,8:F2}" + separator;
+                    line_filtered += $"{gx.getFilteredValue(gyro.X),8:F2}" + separator;
 
-                    Console.Write($"  Y: ");
-                    Console.Write($"{gyro.Y,7:N2} ");
-                    Console.Write($"{gy.getFilteredValue(gyro.Y),7:N2} ");
-                    Console.Write($"{gy1.getFilteredValue(Math.Round(gyro.Y, 3)),7:N2} ");
+                    Console.Write($" Y: ");
+                    Console.Write($"{gyro.Y,8:F2} ");
+                    Console.Write($"{gy.getFilteredValue(gyro.Y),8:F2} ");
+                    line += $"{gyro.Y,8:F2}" + separator;
+                    line_filtered += $"{gy.getFilteredValue(gyro.Y),8:F2}" + separator;
 
-                    Console.Write($"  Z: ");
-                    Console.Write($"{gyro.Z,7:N2} ");
-                    Console.Write($"{gz.getFilteredValue(gyro.Z),7:N2} ");
-                    Console.Write($"{gz1.getFilteredValue(Math.Round(gyro.Z, 3)),7:N2} ");
+                    Console.Write($" Z: ");
+                    Console.Write($"{gyro.Z,8:F2} ");
+                    Console.Write($"{gz.getFilteredValue(gyro.Z),8:F2} ");
+                    line += $"{gyro.Z,8:F2}" + separator;
+                    line_filtered += $"{gz.getFilteredValue(gyro.Z),8:F2}" + separator;
 
-                    //var temp = imu.GetTemperature();
-                    //Console.Write($"Temp = {temp.Celsius.ToString("0.00")} °C");
+                    Console.Write($"{temp.Celsius.ToString("0.00"), 8:F2}°C");
+                    line += $"{temp.Celsius.ToString("0.00"),8:F2}";
+                    line_filtered += $"{temp.Celsius.ToString("0.00"),8:F2}";
+
+                    Console.Write(Environment.NewLine);
+                    line += Environment.NewLine;
+                    line_filtered += Environment.NewLine;
+
                     last_time = time;
-                    Console.WriteLine();
+                    csv.CSV_Write("testdata", line);
+                    csv_filtered.CSV_Write("testdata_filtered", line_filtered);
                 }
 
                 //Thread.Sleep(delay);
@@ -155,7 +179,7 @@ namespace AlphaBot2
         }
 
 
-        public void AdcTest(int delay = 100)
+        public void AdcTest(double delay = 100)
         {
             adc = new Tlc1543((byte)5, (byte)23, (byte)24, (byte)25, (byte)5);
             while (true)
@@ -167,13 +191,13 @@ namespace AlphaBot2
                 }
 
                 Console.WriteLine();
-                Thread.Sleep(delay);
+                Thread.Sleep((int)delay);
             }
         }
 
         public void AdcTest1()
         {
-            Console.WriteLine($"IMU Test");
+            Console.WriteLine($"ADC Test1");
             byte CS = 5;
             byte DOUT = 23;
             byte ADDR = 24;
@@ -227,6 +251,28 @@ namespace AlphaBot2
                 }
                 Thread.Sleep(100);
                 Console.WriteLine("");
+            }
+        }
+
+        public void AdcTest2()
+        {
+            Console.WriteLine($"ADC Test2");
+            byte CS = 5;
+            byte DOUT = 23;
+            byte ADDR = 24;
+            byte IOCLK = 25;
+            GpioController controller = new GpioController(PinNumberingScheme.Logical);
+            controller.OpenPin(CS, PinMode.Output);
+            controller.OpenPin(DOUT, PinMode.InputPullUp);
+            controller.OpenPin(ADDR, PinMode.Output);
+            controller.OpenPin(IOCLK, PinMode.Output);
+
+
+            while (true)
+            {
+                
+                Thread.Sleep(100);
+                Console.WriteLine();
             }
         }
 
