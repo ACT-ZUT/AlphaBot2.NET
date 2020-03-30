@@ -72,60 +72,13 @@ namespace Iot.Device.Adc
 			digital.OpenPin(IOCLK, PinMode.Output);
 		}
 
-
-		/// <summary>
-		/// Reads the sensor values into an array. 
-		/// The values returned are a measure of the reflectance in abstract units,
-		/// with higher values corresponding to lower reflectance(e.g.a black
-		/// surface or a void).
-		/// </summary>
-		/// <returns>A value corresponding to relative voltage level on specified device channel</returns>
-		public SortedList<byte, uint> AnalogRead()
-		{
-			for (byte i = 0; i < channels + 1; i++)
-			{
-				values[i] = 0;
-			}
-			for (byte channel = 0; channel < channels; channel++)
-			{
-				digital.Write(CS, 0);
-				for (int i = 0; i < 10; i++)
-				{
-					if (i < 4)
-					{
-						//send 4-bit Address
-						if ((channel >> (3 - i) & 0x01) != 0)
-						{
-							digital.Write(ADDR, 1);
-						}
-						else
-						{
-							digital.Write(ADDR, 0);
-						}
-					}
-					// read 10-bit data
-					values[channel] <<= 1;
-					if (digital.Read(DOUT) == PinValue.High)
-					{
-						values[channel] |= 0x01;
-					}
-					digital.Write(IOCLK, 1);
-					digital.Write(IOCLK, 0);
-				}
-				Thread.Sleep(TimeSpan.FromMilliseconds(0.1));
-				digital.Write(CS, 1);
-			}
-			last_values = values;
-			return values;
-		}
-
 		/// <summary>
 		/// Reads the sensor values into an integer.
 		/// The values returned are a measure of the reflectance in abstract units,
 		/// with higher values corresponding to lower reflectance(e.g.a black
 		/// surface or a void).
 		/// </summary>
-		/// <param name="channelNumber"></param>
+		/// <param name="channelNumber">Channel to be read</param>
 		/// <returns>A 10 bit value corresponding to relative voltage level on specified device channel</returns>
 		public int ReadChannel(Channel channelNumber)
 		{

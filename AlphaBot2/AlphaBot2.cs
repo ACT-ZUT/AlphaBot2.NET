@@ -63,12 +63,13 @@ namespace AlphaBot2
             Console.WriteLine($"Motor Test");
             Stopwatch sw = Stopwatch.StartNew();
             string lastSpeedDisp = null;
-            
+
+            motorL = DCMotor.Create(6, 12, 13);
+            motorR = DCMotor.Create(26, 20, 21);
+
 
             while (sw.ElapsedMilliseconds < (Math.PI * 2000))
             {
-                
-
                 double time = sw.ElapsedMilliseconds / 1000.0;
 
                 // Note: range is from -1 .. 1 (for 1 pin setup 0 .. 1)
@@ -93,6 +94,7 @@ namespace AlphaBot2
             if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
             else delay = 10;
 
+
             imu = new Mpu6050(I2cDevice.Create(new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
             Kalman gx = new Kalman(), gy = new Kalman(), gz = new Kalman();
             Kalman gx1 = new Kalman(), gy1 = new Kalman(), gz1 = new Kalman();
@@ -106,8 +108,11 @@ namespace AlphaBot2
             string separator = ",";
             string line = "T, Acc X, Acc Y, Acc Z, Gyro X, Gyro Y, Gyro Z, Temp" + Environment.NewLine;
             string line_filtered = "T, Acc X, Acc Y, Acc Z, Gyro X, Gyro Y, Gyro Z, Temp" + Environment.NewLine;
-            csv.CSV_Write("testdata", line);
-            csv_filtered.CSV_Write("testdata_filtered", line_filtered);
+            if (argsList[2] == "csv")
+            {
+                csv.CSV_Write("testdata", line);
+                csv_filtered.CSV_Write("testdata_filtered", line_filtered);
+            }
 
             Console.WriteLine("Run Gyroscope and Accelerometer Self Test:");
             Console.WriteLine($"{imu.RunGyroscopeAccelerometerSelfTest()}");
@@ -179,8 +184,11 @@ namespace AlphaBot2
                     line_filtered += Environment.NewLine;
 
                     last_time = time;
-                    csv.CSV_Write("testdata", line);
-                    csv_filtered.CSV_Write("testdata_filtered", line_filtered);
+                    if (argsList[2] == "csv")
+                    {
+                        csv.CSV_Write("testdata", line);
+                        csv_filtered.CSV_Write("testdata_filtered", line_filtered);
+                    }
                 }
 
                 //Thread.Sleep(delay);

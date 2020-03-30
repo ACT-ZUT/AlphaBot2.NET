@@ -6,10 +6,10 @@
     <Company>ACT Science Club</Company>
     <Platforms>AnyCPU</Platforms>
     <PackageId>AlphaBot2.NET</PackageId>
-    <AssemblyVersion>0.3.*</AssemblyVersion>
+    <AssemblyVersion>0.4.*</AssemblyVersion>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <Deterministic>false</Deterministic>
-    <Version>0.3</Version>
+    <Version>0.4</Version>
   </PropertyGroup>
 
   <ItemGroup>
