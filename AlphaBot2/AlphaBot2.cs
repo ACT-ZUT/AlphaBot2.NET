@@ -1,28 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Text;
-using System.Device.Pwm.Drivers;
+using System.Linq;
 using System.Threading;
+using System.Reflection;
 using System.Diagnostics;
-
+using System.Collections.Generic;
 
 using System.Device.I2c;
+using System.Device.Gpio;
+using System.Device.Pwm.Drivers;
 
-using Iot.Device.DCMotor;
-using Iot.Device.Hcsr04;
-using Iot.Device.Graphics;
-using Iot.Device.Ws28xx;
-using Iot.Device.CpuTemperature;
 using Iot.Device.Imu;
 using Iot.Device.Adc;
-using System.Device.Gpio;
+using Iot.Device.Ws28xx;
+using Iot.Device.Hcsr04;
+using Iot.Device.DCMotor;
+using Iot.Device.Graphics;
+using Iot.Device.CpuTemperature;
 
 using Filters;
-using System.IO;
-using System.Reflection;
 
 namespace AlphaBot2
 {
+
     class AlphaBot2
     {
         // 1 pin mode
@@ -41,7 +42,7 @@ namespace AlphaBot2
         Mpu6050 imu;
         Tlc1543 adc;
         Kalman filter_imu;
-        StringBuilder csv = new StringBuilder();
+        Debug csv = new Debug();
 
         public AlphaBot2()
         {
@@ -51,8 +52,12 @@ namespace AlphaBot2
             //imu = new Mpu6050(I2cDevice.Create(new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
         }
 
-        public void MotorTest(double delay = 1)
+        public void MotorTest(List<string> argsList)
         {
+            double delay;
+            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
+            else delay = 10;
+
             const double Period = 20.0;
 
             Console.WriteLine($"Motor Test");
@@ -63,6 +68,7 @@ namespace AlphaBot2
             while (sw.ElapsedMilliseconds < (Math.PI * 2000))
             {
                 
+
                 double time = sw.ElapsedMilliseconds / 1000.0;
 
                 // Note: range is from -1 .. 1 (for 1 pin setup 0 .. 1)
@@ -80,9 +86,13 @@ namespace AlphaBot2
 
         }
 
-        public void ImuTest(double delay = 100)
+        public void ImuTest(List<string> argsList)
         {
             Console.WriteLine($"IMU Test");
+            double delay;
+            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
+            else delay = 10;
+
             imu = new Mpu6050(I2cDevice.Create(new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
             Kalman gx = new Kalman(), gy = new Kalman(), gz = new Kalman();
             Kalman gx1 = new Kalman(), gy1 = new Kalman(), gz1 = new Kalman();
@@ -178,100 +188,52 @@ namespace AlphaBot2
 
         }
 
-
-        public void AdcTest(double delay = 100)
+        public void AdcTest(List<string> argsList)
         {
-            adc = new Tlc1543((byte)5, (byte)23, (byte)24, (byte)25, (byte)5);
+            double delay;
+            byte sensorNumber;
+            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
+            else delay = 10;
+            if (argsList.Count > 2) sensorNumber = Convert.ToByte(argsList[2]);
+            else sensorNumber = 11;
+
+            adc = new Tlc1543(24, 5, 23, 25);
             while (true)
             {
-                var TRvalues = adc.AnalogRead();
-                foreach (var sensor in TRvalues)
+                for (int i = 0; i < sensorNumber; i++)
                 {
-                    Console.Write($"{sensor.Key}: {sensor.Value,4} ");
+                    Console.Write($"{i}: {adc.ReadChannel((Tlc1543.Channel)i), 4} ");
+                    Thread.Sleep((int)delay);
                 }
-
                 Console.WriteLine();
-                Thread.Sleep((int)delay);
             }
         }
 
-        public void AdcTest1()
+        public void AdcTest1(List<string> argsList)
         {
             Console.WriteLine($"ADC Test1");
-            byte CS = 5;
-            byte DOUT = 23;
-            byte ADDR = 24;
-            byte IOCLK = 25;
-            GpioController controller = new GpioController(PinNumberingScheme.Logical);
-            controller.OpenPin(CS, PinMode.Output);
-            controller.OpenPin(DOUT, PinMode.InputPullUp);
-            controller.OpenPin(ADDR, PinMode.Output);
-            controller.OpenPin(IOCLK, PinMode.Output);
+            List<Tlc1543.Channel> channelList = new List<Tlc1543.Channel> {
+                Tlc1543.Channel.A0,
+                Tlc1543.Channel.A1,
+                Tlc1543.Channel.A2,
+                Tlc1543.Channel.A3,
+                Tlc1543.Channel.A4,
+                Tlc1543.Channel.A10
+            };
+
+            double delay;
+            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
+            else delay = 10;
+
+            adc = new Tlc1543(24, 5, 23, 25);
             while (true)
             {
-                for (int channel = 0; channel < 12; channel++)
+                List<int> values = adc.ReadChannel(channelList);
+                for (int i = 0; i < values.Count; i++)
                 {
-                    int value = 0;
-                    controller.Write(CS, 0);
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if ((channel >> (3 - i) & 0x01) != 0)
-                        {
-                            controller.Write(ADDR, 1);
-                        }
-                        else
-                        {
-                            controller.Write(ADDR, 0);
-                        }
-                        controller.Write(IOCLK, 1);
-                        controller.Write(IOCLK, 0);
-                    }
-                    for (int i = 0; i < 6; i++)
-                    {
-                        controller.Write(IOCLK, 1);
-                        controller.Write(IOCLK, 0);
-                    }
-                    controller.Write(CS, 1);
-                    Thread.Sleep(1);
-
-                    controller.Write(CS, 0);
-                    for (int i = 0; i < 10; i++)
-                    {
-                        controller.Write(IOCLK, 1);
-                        value <<= 1;
-                        if (controller.Read(DOUT) == PinValue.High)
-                        {
-                            value |= 0x01;
-                        }
-                        controller.Write(IOCLK, 0);
-                    }
-                    controller.Write(IOCLK, 1);
-
-                    Console.Write($"{channel}: {value,4} ");
+                    Console.Write($"{i}: {values[i],4} ");
                 }
-                Thread.Sleep(100);
-                Console.WriteLine("");
-            }
-        }
-
-        public void AdcTest2()
-        {
-            Console.WriteLine($"ADC Test2");
-            byte CS = 5;
-            byte DOUT = 23;
-            byte ADDR = 24;
-            byte IOCLK = 25;
-            GpioController controller = new GpioController(PinNumberingScheme.Logical);
-            controller.OpenPin(CS, PinMode.Output);
-            controller.OpenPin(DOUT, PinMode.InputPullUp);
-            controller.OpenPin(ADDR, PinMode.Output);
-            controller.OpenPin(IOCLK, PinMode.Output);
-
-
-            while (true)
-            {
-                
-                Thread.Sleep(100);
+                Thread.Sleep((int)delay);
                 Console.WriteLine();
             }
         }

@@ -4,60 +4,48 @@ using System.Diagnostics;
 using System.Threading;
 using System.Reflection;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace AlphaBot2
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            CultureInfo.DefaultThreadCurrentCulture = CultureInfo.InvariantCulture;
-            CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.InvariantCulture;
-            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            DateTime buildDate = new DateTime(2000, 1, 1).AddDays(version.Build).AddSeconds(version.Revision * 2);
+            List<string> argsList = new List<string>(args);
+            Debug debug = new Debug();
+            debug.WriteInfo();
+            AlphaBot2 Robot;
 
-            Console.WriteLine($"{typeof(AlphaBot2).Assembly.GetName().Name}");
-            Console.WriteLine($"ACT Science Club");
-            Console.WriteLine($"{typeof(AlphaBot2).Assembly.GetName().ProcessorArchitecture}");
-            Console.WriteLine($"Version: {version}");
-            Console.WriteLine($"Build Date: {buildDate}");
-
-#if DEBUG
-            Console.WriteLine("Configuration: Debug");
-            Console.WriteLine("Waiting for remote debugger...");
-            while (true)
+            
+            if (debug.Architecture == ProcessorArchitecture.Arm)
             {
-                if (Debugger.IsAttached) break;
-                Thread.Sleep(1000);
+                Robot = new AlphaBot2();
             }
-            Thread.Sleep(1000);
-#else
-            Console.WriteLine("Configuration: Release");
-#endif
-
-            var Robot = new AlphaBot2();
-            if (args.Length != 0)
+            else
             {
-                double delay = 0;
-                if (args.Length > 1) delay = Convert.ToDouble(args[1]);
+                //make constructor for a PC testing version
+                Robot = new AlphaBot2();
+            }
 
-                switch (args[0])
+            if (argsList.Count > 0)
+            {
+                switch (argsList[0])
                 {
                     case "camera":
-
-                        //Robot.CameraTest();
+                        //Robot.CameraTest(argsList);
                         break;
                     case "imu":
-                        if (delay != 0) Robot.ImuTest(delay);
-                        else Robot.ImuTest();
+                        Robot.ImuTest(argsList);
                         break;
                     case "motor":
-                        if (delay != 0) Robot.MotorTest(delay);
-                        else Robot.MotorTest();
+                        Robot.MotorTest(argsList);
                         break;
                     case "adc":
-                        if (delay != 0) Robot.AdcTest(delay);
-                        else Robot.AdcTest();
+                        Robot.AdcTest(argsList);
+                        break;
+                    case "adc1":
+                        Robot.AdcTest1(argsList);
                         break;
                 }
             }
