@@ -33,7 +33,7 @@ namespace AlphaBot2
                 switch (argsList[0])
                 {
                     case "camera":
-                        //Robot.CameraTest(argsList);
+                        Robot.CameraTest(argsList);
                         break;
                     case "imu":
                         Robot.ImuTest(argsList);
