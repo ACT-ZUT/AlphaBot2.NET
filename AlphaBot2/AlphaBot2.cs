@@ -17,6 +17,7 @@ using Iot.Device.Ws28xx;
 using Iot.Device.Hcsr04;
 using Iot.Device.DCMotor;
 using Iot.Device.Graphics;
+using Iot.Device.IrReceiver;
 using Iot.Device.CpuTemperature;
 
 using Filters;
@@ -43,6 +44,8 @@ namespace AlphaBot2
         Tlc1543 adc;
         Kalman filter_imu;
         Debug csv = new Debug();
+        IrReceiver IR;
+        
 
         public AlphaBot2()
         {
@@ -240,6 +243,31 @@ namespace AlphaBot2
                 for (int i = 0; i < values.Count; i++)
                 {
                     Console.Write($"{i}: {values[i],4} ");
+                }
+                Thread.Sleep((int)delay);
+                Console.WriteLine();
+            }
+        }
+
+        public void IrTest(List<string> argsList)
+        {
+            Console.WriteLine($"Ir Test");
+            IR = new IrReceiver(17);
+
+            double delay;
+            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
+            else delay = 10;
+
+            while (true)
+            {
+                int data = IR.GetKey();
+                if(data != 0 )
+                {
+                    Console.WriteLine($"data: {data} ");
+                }
+                else if(data == 999)
+                {
+                    Console.WriteLine($"data: repeated last");
                 }
                 Thread.Sleep((int)delay);
                 Console.WriteLine();

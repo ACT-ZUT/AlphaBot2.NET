@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\IrReceiver\IrReceiver.csproj" />
     <ProjectReference Include="..\Mpu6050\Mpu6050.csproj" />
     <ProjectReference Include="..\Tlc1543\Tlc1543.csproj" />
   </ItemGroup>

@@ -47,6 +47,9 @@ namespace AlphaBot2
                     case "adc1":
                         Robot.AdcTest1(argsList);
                         break;
+                    case "ir":
+                        Robot.IrTest(argsList);
+                        break;
                 }
             }
             else
