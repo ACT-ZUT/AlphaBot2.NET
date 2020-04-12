@@ -20,6 +20,8 @@ using Iot.Device.Graphics;
 using Iot.Device.IrReceiver;
 using Iot.Device.CpuTemperature;
 
+using Emgu.CV;
+
 using Filters;
 
 namespace AlphaBot2
@@ -46,6 +48,9 @@ namespace AlphaBot2
         Debug csv = new Debug();
         IrReceiver IR;
         
+        VideoCapture camera;
+        VideoWriter VideoW;
+        Mat frame;
 
         public AlphaBot2()
         {
@@ -249,6 +254,68 @@ namespace AlphaBot2
             }
         }
 
+        public void CameraTest(List<string> argsList)
+        {
+            int frameRate = 30;
+            camera = new VideoCapture(0);
+            camera.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Autofocus, 0);
+            camera.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.AutoExposure, 0);
+            camera.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.AutoWb, 0);
+            camera.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.Fps, frameRate);
+            camera.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth, 1920);
+            camera.SetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight, 1080);
+
+            int fourcc = VideoWriter.Fourcc('I', 'Y', 'U', 'V');
+
+            //try
+            //{
+            //    VideoW = new VideoWriter(@"/home/pi/test_%02d.avi",
+            //        frameRate, fourcc,
+            //        new System.Drawing.Size(
+            //            (int)camera.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameWidth),
+            //            (int)camera.GetCaptureProperty(Emgu.CV.CvEnum.CapProp.FrameHeight)),
+            //        true);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //}
+           
+            
+
+            //VideoW = new VideoWriter(@"/home/pi/test.avi", 30, fourcc, new System.Drawing.Size(1280, 720), true);
+
+
+            frame = new Mat();
+            camera.ImageGrabbed += ProcessFrame;
+            if (camera != null)
+            {
+                try
+                {
+                    camera.Start();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            this.AdcTest1(argsList);
+        }
+
+        private void ProcessFrame(object sender, EventArgs e)
+        {
+            DateTime date = DateTime.Now;
+            if (camera != null && camera.Ptr != IntPtr.Zero)
+            {
+                camera.Retrieve(frame, 0);
+                frame.Save($@"/home/pi/dataset/test_{date.Year:D4}{date.Month:D2}{date.Day:D2}_{date.Hour:D2}{date.Minute:D2}{date.Millisecond:D3}.jpg");
+                System.Device.DelayHelper.DelayMilliseconds(1000, true);
+                //VideoW.Write(frame);
+                //rest of processing 
+                Console.Write(" frame");
+            }
+        }
+
         public void IrTest(List<string> argsList)
         {
             Console.WriteLine($"Ir Test");
@@ -278,6 +345,8 @@ namespace AlphaBot2
         {
             motorL.Dispose();
             motorR.Dispose();
+            camera.Stop();
+            camera.Dispose();
         }
     }
 }

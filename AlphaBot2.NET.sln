@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tlc1543", "Tlc1543\Tlc1543.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IrReceiver", "IrReceiver\IrReceiver.csproj", "{17C94450-40A6-4BBB-8CAA-C34688ED977D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EmguCV", "EmguCV\EmguCV.csproj", "{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +59,18 @@ Global
 		{CC4DC336-A406-4E1F-B9B7-E4551223A584}.Release|linux-arm.Build.0 = Release|Any CPU
 		{CC4DC336-A406-4E1F-B9B7-E4551223A584}.Release|x64.ActiveCfg = Release|Any CPU
 		{CC4DC336-A406-4E1F-B9B7-E4551223A584}.Release|x64.Build.0 = Release|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Debug|linux-arm.Build.0 = Debug|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Debug|x64.Build.0 = Debug|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|linux-arm.ActiveCfg = Release|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|linux-arm.Build.0 = Release|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|x64.ActiveCfg = Release|Any CPU
+		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|x64.Build.0 = Release|Any CPU
 		{17C94450-40A6-4BBB-8CAA-C34688ED977D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17C94450-40A6-4BBB-8CAA-C34688ED977D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17C94450-40A6-4BBB-8CAA-C34688ED977D}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
