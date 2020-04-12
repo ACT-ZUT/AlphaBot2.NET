@@ -23,6 +23,7 @@
     <ProjectReference Include="..\IrReceiver\IrReceiver.csproj" />
     <ProjectReference Include="..\Mpu6050\Mpu6050.csproj" />
     <ProjectReference Include="..\Tlc1543\Tlc1543.csproj" />
+    <ProjectReference Include="..\Ws2812b\Ws2812b.csproj" />
   </ItemGroup>
 
   <ItemGroup>

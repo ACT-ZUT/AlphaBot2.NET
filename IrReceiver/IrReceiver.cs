@@ -84,15 +84,27 @@ namespace Iot.Device.IrReceiver
 						cnt += 1;
 					}
 				}
+				if (data[0] + data[1] == 0xFF & data[2] + data[3] == 0xFF)
+				{
+					return data[2];
+				}
+				else
+				{
+					return 999;
+				}
 			}
-			if (data[0] + data[1] == 0xFF & data[2]+data[3] == 0xFF)
+			return 0;
+		}
+
+		public int GetKeyTemp()
+		{
+			int[] data = { 0, 0, 0, 0 };
+
+			if (digital.Read(IR) == PinValue.High)
 			{
-				return data[2];
+				return 1;
 			}
-			else
-			{
-				return 999;
-			}
+			return 0;
 		}
 
 		public void Dispose()

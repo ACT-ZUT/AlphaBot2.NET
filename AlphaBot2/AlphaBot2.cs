@@ -316,6 +316,22 @@ namespace AlphaBot2
             }
         }
 
+        public void IrTest1(List<string> argsList)
+        {
+            Console.WriteLine($"Ir Test");
+            IR = new IrReceiver(17);
+
+            double delay;
+            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
+            else delay = 10;
+
+            while (true)
+            {
+                Console.WriteLine($"{IR.GetKeyTemp()}");
+                Thread.Sleep((int)delay);
+            }
+        }
+
         public void IrTest(List<string> argsList)
         {
             Console.WriteLine($"Ir Test");
@@ -328,16 +344,19 @@ namespace AlphaBot2
             while (true)
             {
                 int data = IR.GetKey();
-                if(data != 0 )
+                if (data == 0 & data != 999)
                 {
-                    Console.WriteLine($"data: {data} ");
+                    Console.Write($"_");
                 }
-                else if(data == 999)
+                else if (data == 999)
                 {
                     Console.WriteLine($"data: repeated last");
                 }
+                else
+                {
+                    Console.WriteLine($"data: {data} ");
+                }
                 Thread.Sleep((int)delay);
-                Console.WriteLine();
             }
         }
 
