@@ -23,6 +23,7 @@ using Iot.Device.CpuTemperature;
 using Emgu.CV;
 
 using Filters;
+using static DelayHelper.Delay;
 
 namespace AlphaBot2
 {
@@ -309,7 +310,7 @@ namespace AlphaBot2
             {
                 camera.Retrieve(frame, 0);
                 frame.Save($@"/home/pi/dataset/test_{date.Year:D4}{date.Month:D2}{date.Day:D2}_{date.Hour:D2}{date.Minute:D2}{date.Millisecond:D3}.jpg");
-                System.Device.DelayHelper.DelayMilliseconds(1000, true);
+                DelayMilliseconds(1000, true);
                 //VideoW.Write(frame);
                 //rest of processing 
                 Console.Write(" frame");

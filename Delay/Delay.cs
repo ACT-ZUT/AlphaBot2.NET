@@ -5,12 +5,12 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace System.Device
+namespace DelayHelper
 {
     /// <summary>
     /// Helpers for short waits.
     /// </summary>
-    public static class DelayHelper
+    public static class Delay
     {
         // GetTimestamp() currently can take ~300ns. We hope to improve this to get better
         // fidelity for very tight spins.

@@ -6,10 +6,10 @@
     <Company>ACT Science Club</Company>
     <Platforms>AnyCPU</Platforms>
     <PackageId>AlphaBot2.NET</PackageId>
-    <AssemblyVersion>0.4.*</AssemblyVersion>
+    <AssemblyVersion>0.5.*</AssemblyVersion>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <Deterministic>false</Deterministic>
-    <Version>0.4</Version>
+    <Version>0.5</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Delay\Delay.csproj" />
     <ProjectReference Include="..\EmguCV\EmguCV.csproj" />
     <ProjectReference Include="..\IrReceiver\IrReceiver.csproj" />
     <ProjectReference Include="..\Mpu6050\Mpu6050.csproj" />

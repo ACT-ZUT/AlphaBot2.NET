@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading;
 using Iot.Units;
 using System.Device.Gpio;
+using static DelayHelper.Delay;
 
 namespace Iot.Device.Adc
 {
@@ -114,7 +115,7 @@ namespace Iot.Device.Adc
 			//probably can omit that due to for loop and if condition
 			//need to check CS(less than 0.8V) to first ADDR(minimum of 2V)
 			//on osciloscope to check how much time it takes on RPi
-			DelayHelper.DelayMicroseconds(1, false); 
+			DelayMicroseconds(1, false); 
 			for (int i = 0; i < 10; i++)
 			{
 				if (i < 4)
@@ -141,7 +142,7 @@ namespace Iot.Device.Adc
 				//to check how fast can those clocks can be generated
 			}
 			digital.Write(CS, 1);
-			DelayHelper.DelayMicroseconds(100, false);
+			DelayMicroseconds(100, false);
 			return value;
 		}
 

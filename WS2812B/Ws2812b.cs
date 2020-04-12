@@ -9,7 +9,7 @@ namespace Iot.Device.Ws2812b
         /// <summary>
         /// SPI device used for communication with the LED driver
         /// </summary>
-        protected readonly PinDevice _pinDevice;
+        //protected readonly PinDevice _pinDevice;
 
         public BitmapImage Image { get; protected set; }
         public Ws2812b(byte DATA, int width, int height = 1)

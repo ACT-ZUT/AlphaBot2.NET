@@ -14,6 +14,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Device.Gpio;
+using static DelayHelper.Delay;
 
 namespace Iot.Device.IrReceiver
 {
@@ -21,7 +22,6 @@ namespace Iot.Device.IrReceiver
     {
 		private GpioController digital = new GpioController(PinNumberingScheme.Logical);
 		private byte IR;
-		
 
 		public IrReceiver(byte IR)
 		{
@@ -41,7 +41,7 @@ namespace Iot.Device.IrReceiver
 				while(digital.Read(IR) == PinValue.Low & count < 200)
 				{
 					count += 1;
-					DelayHelper.DelayMicroseconds(60, true);
+					DelayMicroseconds(60, true);
 				}
 				if(count < 10)
 				{
@@ -51,7 +51,7 @@ namespace Iot.Device.IrReceiver
 				while (digital.Read(IR) == PinValue.High & count < 80)
 				{
 					count += 1;
-					DelayHelper.DelayMicroseconds(60, true);
+					DelayMicroseconds(60, true);
 				}
 
 				int idx = 0;
@@ -62,13 +62,13 @@ namespace Iot.Device.IrReceiver
 					while (digital.Read(IR) == PinValue.Low & count < 12)
 					{
 						count += 1;
-						DelayHelper.DelayMicroseconds(60, true);
+						DelayMicroseconds(60, true);
 					}
 					count = 0;
 					while (digital.Read(IR) == PinValue.High & count < 40)
 					{
 						count += 1;
-						DelayHelper.DelayMicroseconds(60, true);
+						DelayMicroseconds(60, true);
 					}
 					if (count > 7)
 					{
