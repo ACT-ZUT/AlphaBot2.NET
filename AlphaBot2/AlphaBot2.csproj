@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\EmguCV\EmguCV.csproj" />
     <ProjectReference Include="..\Mpu6050\Mpu6050.csproj" />
     <ProjectReference Include="..\Tlc1543\Tlc1543.csproj" />
   </ItemGroup>
