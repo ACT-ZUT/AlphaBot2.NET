@@ -5,6 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Emgu.CV" Version="4.2.0.3662" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Delay\Delay.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Emgu.CV.Platform.NetStandard.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

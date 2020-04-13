@@ -15,47 +15,7 @@ namespace AlphaBot2
             List<string> argsList = new List<string>(args);
             Debug debug = new Debug();
             debug.WriteInfo();
-            AlphaBot2 Robot;
-
-            
-            if (debug.Architecture == ProcessorArchitecture.Arm)
-            {
-                Robot = new AlphaBot2();
-            }
-            else
-            {
-                //make constructor for a PC testing version
-                Robot = new AlphaBot2();
-            }
-
-            if (argsList.Count > 0)
-            {
-                switch (argsList[0])
-                {
-                    case "camera":
-                        Robot.CameraTest(argsList);
-                        break;
-                    case "imu":
-                        Robot.ImuTest(argsList);
-                        break;
-                    case "motor":
-                        Robot.MotorTest(argsList);
-                        break;
-                    case "adc":
-                        Robot.AdcTest(argsList);
-                        break;
-                    case "adc1":
-                        Robot.AdcTest1(argsList);
-                        break;
-                    case "ir":
-                        Robot.IrTest(argsList);
-                        break;
-                }
-            }
-            else
-            {
-                Console.WriteLine("Default Case:");
-            }
+            AlphaBot2 Robot = new AlphaBot2(argsList);
 
             Console.CancelKeyPress += (o, e) =>
             {

@@ -25,7 +25,7 @@ namespace DelayHelper
         /// True to allow yielding the thread. If this is set to false, on single-proc systems
         /// this will prevent all other code from running.
         /// </param>
-        public static void DelayMicroseconds(int microseconds, bool allowThreadYield)
+        public static void DelayMicroseconds(int microseconds, bool allowThreadYield = true)
         {
             long start = Stopwatch.GetTimestamp();
             ulong minimumTicks = (ulong)(microseconds * Stopwatch.Frequency / 1_000_000);
@@ -57,7 +57,7 @@ namespace DelayHelper
         /// True to allow yielding the thread. If this is set to false, on single-proc systems
         /// this will prevent all other code from running.
         /// </param>
-        public static void DelayMilliseconds(int milliseconds, bool allowThreadYield)
+        public static void DelayMilliseconds(int milliseconds, bool allowThreadYield = true)
         {
             // We have this as a separate method for now to make calling code clearer
             // and to allow us to add additional logic to the millisecond wait in the

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Device.Gpio;
 //using System.Drawing;
 using Iot.Device.Graphics;
 
@@ -10,11 +11,16 @@ namespace Iot.Device.Ws2812b
         /// SPI device used for communication with the LED driver
         /// </summary>
         //protected readonly PinDevice _pinDevice;
+        private GpioController digital = new GpioController(PinNumberingScheme.Logical);
+        byte DATA;
 
         public BitmapImage Image { get; protected set; }
         public Ws2812b(byte DATA, int width, int height = 1)
         {
-            Image = new BitmapImageNeo3(width, height); 
+            Image = new BitmapImageNeo3(width, height);
+            this.DATA = DATA;
+
+            digital.OpenPin(this.DATA, PinMode.Input);
         }
 
     }

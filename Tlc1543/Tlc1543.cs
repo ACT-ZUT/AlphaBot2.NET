@@ -45,10 +45,10 @@ namespace Iot.Device.Adc
 			this.DOUT = DOUT;
 			this.IOCLK = IOCLK;
 
-			digital.OpenPin(ADDR, PinMode.Output);
-			digital.OpenPin(CS, PinMode.Output);
-			digital.OpenPin(DOUT, PinMode.InputPullUp);
-			digital.OpenPin(IOCLK, PinMode.Output);
+			digital.OpenPin(this.ADDR, PinMode.Output);
+			digital.OpenPin(this.CS, PinMode.Output);
+			digital.OpenPin(this.DOUT, PinMode.InputPullUp);
+			digital.OpenPin(this.IOCLK, PinMode.Output);
 		}
 		/// <summary>
 		/// 
@@ -66,11 +66,11 @@ namespace Iot.Device.Adc
 			this.EOC = EOC;
 			this.IOCLK = IOCLK;
 			
-			digital.OpenPin(ADDR, PinMode.Output);
-			digital.OpenPin(CS, PinMode.Output);
-			digital.OpenPin(DOUT, PinMode.InputPullUp);
-			digital.OpenPin(EOC, PinMode.InputPullUp);
-			digital.OpenPin(IOCLK, PinMode.Output);
+			digital.OpenPin(this.ADDR, PinMode.Output);
+			digital.OpenPin(this.CS, PinMode.Output);
+			digital.OpenPin(this.DOUT, PinMode.InputPullUp);
+			digital.OpenPin(this.EOC, PinMode.InputPullUp);
+			digital.OpenPin(this.IOCLK, PinMode.Output);
 		}
 
 		/// <summary>
@@ -107,6 +107,25 @@ namespace Iot.Device.Adc
 			return values;
 		}
 
+		/// <summary>
+		/// Reads the sensor values into an List
+		/// The values returned are a measure of the reflectance in abstract units,
+		/// with higher values corresponding to lower reflectance(e.g.a black
+		/// surface or a void).
+		/// </summary>
+		/// <returns>List of 10 bit values corresponding to relative voltage level on all device channels</returns>
+		public List<int> ReadAll()
+		{
+			List<int> values = new List<int>(channels);
+			Read((byte)0);
+			for (int i = 1; i < values.Count; i++)
+			{
+				values.Add(Read((byte)i));
+			}
+			values.Add(Read(chargeChannel));
+			return values;
+		}
+
 		private int Read(Channel channelNumber)
 		{
 			int value = 0;
@@ -122,6 +141,44 @@ namespace Iot.Device.Adc
 				{
 					//send 4-bit Address
 					if (((byte)channelNumber >> (3 - i) & 0x01) != 0)
+					{
+						digital.Write(ADDR, 1);
+					}
+					else
+					{
+						digital.Write(ADDR, 0);
+					}
+				}
+				// read 10-bit data (from earlier loop)
+				value <<= 1;
+				if (digital.Read(DOUT) == PinValue.High)
+				{
+					value |= 0x01;
+				}
+				//time from ADDR to IOCLK minimum 100ns
+				digital.Write(IOCLK, 1);
+				digital.Write(IOCLK, 0);
+				//to check how fast can those clocks can be generated
+			}
+			digital.Write(CS, 1);
+			DelayMicroseconds(100, false);
+			return value;
+		}
+		private int Read(byte channelNumber)
+		{
+			int value = 0;
+			digital.Write(CS, 0);
+			//1.425uS between CS => 0 and first ADDR
+			//probably can omit that due to for loop and if condition
+			//need to check CS(less than 0.8V) to first ADDR(minimum of 2V)
+			//on osciloscope to check how much time it takes on RPi
+			DelayMicroseconds(1, false);
+			for (int i = 0; i < 10; i++)
+			{
+				if (i < 4)
+				{
+					//send 4-bit Address
+					if ((channelNumber >> (3 - i) & 0x01) != 0)
 					{
 						digital.Write(ADDR, 1);
 					}

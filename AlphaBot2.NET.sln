@@ -13,9 +13,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IrReceiver", "IrReceiver\Ir
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2812b", "Ws2812b\Ws2812b.csproj", "{525B1B2A-8693-4995-A473-A50F85C63F1A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EmguCV", "EmguCV\EmguCV.csproj", "{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camera", "Camera\Camera.csproj", "{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Delay", "Delay\Delay.csproj", "{00686497-A1E2-46F8-8E71-BC98C06F33C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Delay", "Delay\Delay.csproj", "{00686497-A1E2-46F8-8E71-BC98C06F33C3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C6C1531D-E87D-40E3-B774-8C8A69A34E73}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

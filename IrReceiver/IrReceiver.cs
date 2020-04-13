@@ -33,7 +33,7 @@ namespace Iot.Device.IrReceiver
 		public int GetKey()
 		{
 			int[] data = { 0, 0, 0, 0 };
-			int count = 0;
+			int count;
 
 			if (digital.Read(IR) == PinValue.Low)
 			{
@@ -98,7 +98,7 @@ namespace Iot.Device.IrReceiver
 
 		public int GetKeyTemp()
 		{
-			int[] data = { 0, 0, 0, 0 };
+			//int[] data = { 0, 0, 0, 0 };
 
 			if (digital.Read(IR) == PinValue.High)
 			{

@@ -13,6 +13,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Emgu.CV" Version="4.2.0.3662" />
     <PackageReference Include="Iot.Device.Bindings" Version="1.0.0" />
     <PackageReference Include="System.Device.Gpio" Version="1.0.0" />
@@ -20,7 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Delay\Delay.csproj" />
-    <ProjectReference Include="..\EmguCV\EmguCV.csproj" />
+    <ProjectReference Include="..\Camera\Camera.csproj" />
     <ProjectReference Include="..\IrReceiver\IrReceiver.csproj" />
     <ProjectReference Include="..\Mpu6050\Mpu6050.csproj" />
     <ProjectReference Include="..\Tlc1543\Tlc1543.csproj" />
