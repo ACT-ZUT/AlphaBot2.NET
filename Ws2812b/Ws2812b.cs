@@ -2,10 +2,11 @@
 using System.Device.Gpio;
 //using System.Drawing;
 using Iot.Device.Graphics;
+using static DelayHelper.Delay;
 
 namespace Iot.Device.Ws2812b
 {
-    public class Ws2812b
+    public class Ws2812b : IDisposable
     {
         /// <summary>
         /// SPI device used for communication with the LED driver
@@ -20,8 +21,66 @@ namespace Iot.Device.Ws2812b
             Image = new BitmapImageNeo3(width, height);
             this.DATA = DATA;
 
-            digital.OpenPin(this.DATA, PinMode.Input);
+            digital.OpenPin(this.DATA, PinMode.Output);
         }
+
+        public void Update()
+        {
+            for (int i = 0; i < Image.Width; i++)
+            {
+                foreach (var item in Image.Data)
+                {
+                    if ((item >> (3 - i) & 0x01) != 0)
+                    {
+                        digital.Write(DATA, 1);
+                        digital.Write(DATA, 0);
+                        DelayMicroseconds(1);
+                    }
+                    else
+                    {
+                        digital.Write(DATA, 1);
+                        DelayMicroseconds(1);
+                        digital.Write(DATA, 0);
+                    }
+                }
+            }
+        }
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~Ws2812b()
+        // {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
 
     }
 

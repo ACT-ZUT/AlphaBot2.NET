@@ -107,6 +107,7 @@ namespace Iot.Device.Adc
 			return values;
 		}
 
+
 		/// <summary>
 		/// Reads the sensor values into an List
 		/// The values returned are a measure of the reflectance in abstract units,

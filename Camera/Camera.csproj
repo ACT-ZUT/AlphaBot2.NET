@@ -6,6 +6,11 @@
 
   <ItemGroup>
     <PackageReference Include="Emgu.CV" Version="4.2.0.3662" />
+    <PackageReference Include="Microsoft.DotNet.Analyzers.Compatibility" Version="0.2.12-alpha">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.Management" Version="5.0.0-preview.3.20214.6" />
   </ItemGroup>
 
   <ItemGroup>

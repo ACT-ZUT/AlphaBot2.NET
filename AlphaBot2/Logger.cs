@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AlphaBot2
 {
@@ -8,12 +6,10 @@ namespace AlphaBot2
     {
         public Logger()
         {
-
         }
 
         public void Dispose()
         {
-
         }
     }
 }

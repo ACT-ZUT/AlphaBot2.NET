@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Filters
+﻿namespace Filters
 {
     /*A simplified one dimensional Kalman filter implementation - actually a single variable low pass filter */
-    class Kalman
+
+    internal class Kalman
     {
         /* Kalman filter variables */
         private double q; //process noise covariance
@@ -16,9 +13,9 @@ namespace Filters
 
         public Kalman(double process_noise = 0.125, double sensor_noise = 32, double estimated_error = 1023, double intial_value = 0)
         {
-            /* 
-                The variables are x for the filtered value, q for the process noise, 
-                r for the sensor noise, p for the estimated error and k for the Kalman Gain. 
+            /*
+                The variables are x for the filtered value, q for the process noise,
+                r for the sensor noise, p for the estimated error and k for the Kalman Gain.
                 The state of the filter is defined by the values of these variables.
 
                 The initial values for p is not very important since it is adjusted

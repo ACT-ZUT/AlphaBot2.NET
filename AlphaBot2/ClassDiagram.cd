@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="AlphaBot2.AlphaBot2">
+    <Position X="3" Y="1.75" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="AlphaBot2.AlphaBot2.LineSensor" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>AlphaBot2.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAgAEEAACAACASAAAAMABAAIIAAAgAAACAAA=</HashCode>
+      <FileName>AlphaBot2.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AlphaBot2.Debug">
+    <Position X="6.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAQAAIAAAAAgABAAAACAAAAAAAAIgAAAAAAAAA=</HashCode>
+      <FileName>Diagnostics.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AlphaBot2.Testing">
+    <Position X="12.25" Y="1.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAADAAAIAAAAEAAMAAAAAAAIQAAAAAA=</HashCode>
+      <FileName>Diagnostics.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AlphaBot2.Logger" BaseTypeListCollapsed="true">
+    <Position X="9" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Logger.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="AlphaBot2.Program">
+    <Position X="1" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>Program.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System.Object" Collapsed="true">
+    <Position X="1" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

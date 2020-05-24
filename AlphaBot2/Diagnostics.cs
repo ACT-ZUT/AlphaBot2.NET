@@ -1,44 +1,34 @@
-﻿using System;
+﻿using Filters;
+using Iot.Device.Adc;
+using Iot.Device.DCMotor;
+using Iot.Device.Graphics;
+using Iot.Device.Imu;
+using Iot.Device.IrReceiver;
+using Iot.Device.Ws2812b;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Threading;
-
-using System.Device.I2c;
-using System.Device.Gpio;
-using System.Device.Pwm.Drivers;
-
-using Iot.Device.Imu;
-using Iot.Device.Adc;
-using Iot.Device.Ws28xx;
-using Iot.Device.Hcsr04;
-using Iot.Device.DCMotor;
-using Iot.Device.Graphics;
-using Iot.Device.IrReceiver;
-using Iot.Device.CpuTemperature;
-
-using Emgu.CV;
-
-using Filters;
 using static DelayHelper.Delay;
 
 namespace AlphaBot2
 {
-    class Debug
+    internal class Debug
     {
         /// <summary>
         /// Class used to record, display and export debug data
         /// </summary>
-        string line_temp;
-        int i = 0;
+        private string line_temp;
+
+        private int i = 0;
         public ProcessorArchitecture Architecture;
         public string AssemblyName;
         public DateTime buildDate;
         public Version version;
-
 
         public Debug()
         {
@@ -77,7 +67,7 @@ namespace AlphaBot2
         {
             i++;
             line_temp += line;
-            if(i % 1000 == 0)
+            if (i % 1000 == 0)
             {
                 File.AppendAllText($@"/home/pi/{filename}.csv", line_temp);
                 line_temp = "";
@@ -99,7 +89,6 @@ namespace AlphaBot2
             Console.WriteLine($"Motor Test");
             Stopwatch sw = Stopwatch.StartNew();
             string lastSpeedDisp = null;
-
 
             while (sw.ElapsedMilliseconds < (Math.PI * 2000))
             {
@@ -259,7 +248,8 @@ namespace AlphaBot2
 
             while (true)
             {
-                List<int> values = adc.ReadChannel(channelList);
+                List<int> values = adc.ReadChannel(channelList); //read data
+
                 for (int i = 0; i < values.Count; i++)
                 {
                     Console.Write($"{i}: {values[i],4} ");
@@ -272,7 +262,6 @@ namespace AlphaBot2
         public static void IrTest(List<string> argsList, IrReceiver ir)
         {
             Console.WriteLine($"Ir Test");
-
 
             double delay;
             if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
@@ -312,6 +301,36 @@ namespace AlphaBot2
             }
         }
 
+        public static void LedTest(List<string> argsList, Ws2812b led)
+        {
+            Console.WriteLine($"Led Test");
+
+            double delay;
+            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
+            else delay = 10;
+
+            BitmapImage img = led.Image;
+            img.Clear();
+            img.SetPixel(0, 0, Color.White);
+            img.SetPixel(1, 0, Color.Red);
+            img.SetPixel(2, 0, Color.Green);
+            img.SetPixel(3, 0, Color.Blue);
+            img.Clear();
+            while (true)
+            {
+                for (byte b = 0; b < 255; b++)
+                {
+                    img.SetPixel(0, 0, Color.FromArgb(0xff, b, 0, 0));
+                    img.SetPixel(1, 0, Color.FromArgb(0xff, 0, b, 0));
+                    img.SetPixel(2, 0, Color.FromArgb(0xff, 0, 0, b));
+                    img.SetPixel(3, 0, Color.FromArgb(0xff, b, 0, b));
+                    led.Update();
+                    Console.WriteLine($"{b}");
+                    DelayMilliseconds((int)delay);
+                }
+            }
+        }
+
         public static void CameraTest(List<string> argsList, Camera camera)
         {
             Console.WriteLine($"Camera Test");
@@ -341,15 +360,12 @@ namespace AlphaBot2
             //
             //VideoW = new VideoWriter(@"/home/pi/test.avi", 30, fourcc, new System.Drawing.Size(1280, 720), true);
 
-
             camera.Start();
-            
 
             while (true)
             {
                 DelayMilliseconds((int)delay);
             }
         }
-
     }
 }
