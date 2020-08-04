@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
+
+//Move that to external project
 namespace AlphaBot2
 {
     public class Program

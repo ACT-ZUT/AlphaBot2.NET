@@ -24,6 +24,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Iot.Device.Bindings", "..\.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Device.Gpio", "..\..\..\..\..\..\Git\iot\src\System.Device.Gpio\System.Device.Gpio.csproj", "{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlphaBot2Test", "AlphaBot2Test\AlphaBot2Test.csproj", "{6EE03D5F-7664-4487-BCD9-49B94F2CB699}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -130,6 +132,18 @@ Global
 		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|linux-arm.Build.0 = Release|Any CPU
 		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|x64.ActiveCfg = Release|Any CPU
 		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|x64.Build.0 = Release|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Debug|linux-arm.Build.0 = Debug|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Debug|x64.Build.0 = Debug|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Release|linux-arm.ActiveCfg = Release|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Release|linux-arm.Build.0 = Release|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Release|x64.ActiveCfg = Release|Any CPU
+		{6EE03D5F-7664-4487-BCD9-49B94F2CB699}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

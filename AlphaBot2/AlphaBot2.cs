@@ -9,6 +9,7 @@ using Iot.Device.IrReceiver;
 using Iot.Device.Ws2812b;
 using System;
 using System.Collections.Generic;
+using System.Device;
 using System.Device.I2c;
 using System.Device.Pwm;
 using System.Reflection;
@@ -16,7 +17,7 @@ using System.Threading;
 
 namespace AlphaBot2
 {
-    internal class AlphaBot2
+    public class AlphaBot2
     {
         private CpuTemperature cpuTemperature;
         private Logger logger;
@@ -29,6 +30,17 @@ namespace AlphaBot2
         private Ws2812b led;
         private IrReceiver ir;
 
+        private double delay = 10;
+        private List<Tlc1543.Channel> channelList = new List<Tlc1543.Channel> {
+                Tlc1543.Channel.A0,
+                Tlc1543.Channel.A1,
+                Tlc1543.Channel.A2,
+                Tlc1543.Channel.A3,
+                Tlc1543.Channel.A4
+            };
+        List<LineSensor> tupleSensors = new List<LineSensor>();
+
+        //Change to normal class
         public AlphaBot2(List<string> argsList)
         {
             if (argsList.Count > 0 && typeof(AlphaBot2).Assembly.GetName().ProcessorArchitecture == ProcessorArchitecture.Arm)
@@ -116,6 +128,35 @@ namespace AlphaBot2
             }
         }
 
+        /// <summary>
+        /// Function providing sensors readout
+        /// showing if there is a black line visible 
+        /// underneat the robot
+        /// </summary>
+        /// <returns>Decimal value ranging from -100 to 100 (left to right)</returns>
+        public double? FindLine(List<int> values)
+        {
+            double? ADCLineValue = null;
+
+            var lineAverage = 0;
+            int foundBlack = 0;
+            for (int i = 0; i < values.Count; i++)
+            {
+                if (values[i] < 300)
+                {
+                    lineAverage += (i - 2);
+                    foundBlack++;
+                }
+            }
+            ADCLineValue = ((double)lineAverage / (double)foundBlack)*50;
+            Console.WriteLine(ADCLineValue);
+            return ADCLineValue;
+        }
+
+        /// <summary>
+        /// to fix/change
+        /// </summary>
+        /// <param name="argsList"></param>
         public void FindLine(List<string> argsList)
         {
 
