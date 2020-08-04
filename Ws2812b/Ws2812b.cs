@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Device;
 using System.Device.Gpio;
 //using System.Drawing;
 using Iot.Device.Graphics;
-using static DelayHelper.Delay;
 
 namespace Iot.Device.Ws2812b
 {
@@ -34,12 +34,12 @@ namespace Iot.Device.Ws2812b
                     {
                         digital.Write(DATA, 1);
                         digital.Write(DATA, 0);
-                        DelayMicroseconds(1);
+                        DelayHelper.DelayMicroseconds(1, true);
                     }
                     else
                     {
                         digital.Write(DATA, 1);
-                        DelayMicroseconds(1);
+                        DelayHelper.DelayMicroseconds(1, true);
                         digital.Write(DATA, 0);
                     }
                 }

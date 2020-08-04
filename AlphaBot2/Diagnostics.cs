@@ -13,7 +13,10 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-using static DelayHelper.Delay;
+using System.Device;
+using System.Device.Gpio;
+using System.Device.Pwm.Drivers;
+using System.Device.Pwm;
 
 namespace AlphaBot2
 {
@@ -103,7 +106,7 @@ namespace AlphaBot2
                     lastSpeedDisp = disp;
                     Console.WriteLine(disp);
                 }
-                DelayMilliseconds((int)delay);
+                DelayHelper.DelayMilliseconds((int)delay, true);
             }
         }
 
@@ -191,9 +194,9 @@ namespace AlphaBot2
                     line += $"{gyro.Z,8:F2}" + separator;
                     line_filtered += $"{gz.getFilteredValue(gyro.Z),8:F2}" + separator;
 
-                    Console.Write($"{temp.Celsius.ToString("0.00"),8:F2}°C");
-                    line += $"{temp.Celsius.ToString("0.00"),8:F2}";
-                    line_filtered += $"{temp.Celsius.ToString("0.00"),8:F2}";
+                    Console.Write($"{temp.DegreesCelsius.ToString("0.00"),8:F2}°C");
+                    line += $"{temp.DegreesCelsius.ToString("0.00"),8:F2}";
+                    line_filtered += $"{temp.DegreesCelsius.ToString("0.00"),8:F2}";
 
                     Console.Write(Environment.NewLine);
                     line += Environment.NewLine;
@@ -224,7 +227,7 @@ namespace AlphaBot2
                 for (int i = 0; i < sensorNumber; i++)
                 {
                     Console.Write($"{i}: {adc.ReadChannel((Tlc1543.Channel)i),4} ");
-                    DelayMilliseconds((int)delay);
+                    DelayHelper.DelayMilliseconds((int)delay, true);
                 }
                 Console.WriteLine();
             }
@@ -248,7 +251,7 @@ namespace AlphaBot2
 
             while (true)
             {
-                List<int> values = adc.ReadChannel(channelList); //read data
+                List<int> values = adc.ReadChannels(channelList); //read data
 
                 for (int i = 0; i < values.Count; i++)
                 {
@@ -282,7 +285,7 @@ namespace AlphaBot2
                 {
                     Console.WriteLine($"data: {data} ");
                 }
-                DelayMilliseconds((int)delay);
+                DelayHelper.DelayMilliseconds((int)delay, true);
             }
         }
 
@@ -297,7 +300,7 @@ namespace AlphaBot2
             while (true)
             {
                 Console.WriteLine($"{ir.GetKeyTemp()}");
-                DelayMilliseconds((int)delay);
+                DelayHelper.DelayMilliseconds((int)delay, true);
             }
         }
 
@@ -305,30 +308,30 @@ namespace AlphaBot2
         {
             Console.WriteLine($"Led Test");
 
-            double delay;
-            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
-            else delay = 10;
+            //double delay;
+            //if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
+            //else delay = 10;
 
-            BitmapImage img = led.Image;
-            img.Clear();
-            img.SetPixel(0, 0, Color.White);
-            img.SetPixel(1, 0, Color.Red);
-            img.SetPixel(2, 0, Color.Green);
-            img.SetPixel(3, 0, Color.Blue);
-            img.Clear();
-            while (true)
-            {
-                for (byte b = 0; b < 255; b++)
-                {
-                    img.SetPixel(0, 0, Color.FromArgb(0xff, b, 0, 0));
-                    img.SetPixel(1, 0, Color.FromArgb(0xff, 0, b, 0));
-                    img.SetPixel(2, 0, Color.FromArgb(0xff, 0, 0, b));
-                    img.SetPixel(3, 0, Color.FromArgb(0xff, b, 0, b));
-                    led.Update();
-                    Console.WriteLine($"{b}");
-                    DelayMilliseconds((int)delay);
-                }
-            }
+            //BitmapImage img = led.Image;
+            //img.Clear();
+            //img.SetPixel(0, 0, Color.White);
+            //img.SetPixel(1, 0, Color.Red);
+            //img.SetPixel(2, 0, Color.Green);
+            //img.SetPixel(3, 0, Color.Blue);
+            //img.Clear();
+            //while (true)
+            //{
+            //    for (byte b = 0; b < 255; b++)
+            //    {
+            //        img.SetPixel(0, 0, Color.FromArgb(0xff, b, 0, 0));
+            //        img.SetPixel(1, 0, Color.FromArgb(0xff, 0, b, 0));
+            //        img.SetPixel(2, 0, Color.FromArgb(0xff, 0, 0, b));
+            //        img.SetPixel(3, 0, Color.FromArgb(0xff, b, 0, b));
+            //        led.Update();
+            //        Console.WriteLine($"{b}");
+            //        DelayHelper.DelayMilliseconds((int)delay, true);
+            //    }
+            //}
         }
 
         public static void CameraTest(List<string> argsList, Camera camera)
@@ -364,8 +367,96 @@ namespace AlphaBot2
 
             while (true)
             {
-                DelayMilliseconds((int)delay);
+                DelayHelper.DelayMilliseconds((int)delay, true);
             }
         }
+
+        public static void Timing(List<string> argsList)
+        {
+            
+            Console.WriteLine($"Timing");
+            Timing timing_test = new Timing(12, 21);
+            int delay;
+            if (argsList.Count > 1) delay = Convert.ToInt32(argsList[1]);
+            else delay = 1;
+            timing_test.Test(delay);
+        }
     }
+
+    public class Timing : IDisposable
+    {
+        private readonly int _ch1;
+        private readonly int _ch2;
+        private bool _disposedValue;
+        private GpioController _digital = new GpioController(PinNumberingScheme.Logical);
+        //DCMotor motor = DCMotor.Create(PwmChannel.Create(0, 0, frequency: 50));
+
+        public Timing(int CH1, int CH2)
+        {
+            //_ch1 = CH1;
+            _ch2 = CH2;
+
+            //_digital.OpenPin(_ch1, PinMode.Output);
+            _digital.OpenPin(_ch2, PinMode.Output);
+
+        }
+
+        public void Test(int delay)
+        {
+            var pwm = PwmChannel.Create(0, 0, delay);
+            //var softwarePwmChannel = new SoftwarePwmChannel(21, delay, 0.5, true);
+            pwm.DutyCycle = 0.5;
+            pwm.Start();
+            // SpinWait spinWait = new SpinWait();
+            while (true)
+            {
+                
+
+                //_digital.Write(_ch1, 1);
+                // _digital.Write(_ch1, 0);
+
+                /*
+                _digital.Write(_ch1, 1); // IOCLK CH1
+
+                _digital.Write(_ch2, 1); // CS CH2
+                for (int i = 0; i < delay; i++)
+                {
+
+                }
+                //DelayHelper.DelayMicroseconds(delay, false);
+
+                _digital.Write(_ch2, 0);
+                _digital.Write(_ch1, 0);
+
+                for (int i = 0; i < 10000; i++)
+                {
+
+                }
+                */
+
+
+                /*
+                _digital.Write(_chipSelect, 1);
+                DelayHelper.DelayMicroseconds(0, false);
+                _digital.Write(_chipSelect, 0);
+
+                _digital.Write(_chipSelect, 1);
+                DelayHelper.DelayMicroseconds(1, false);
+                _digital.Write(_chipSelect, 0);
+
+                _digital.Write(_chipSelect, 1);
+                DelayHelper.DelayMicroseconds(2, false);
+                _digital.Write(_chipSelect, 0);
+                */
+            }
+
+            // DelayHelper.DelayMicroseconds(5, false); // t(PZH/PZL)
+        }
+
+        public void Dispose()
+        {
+            ((IDisposable)_digital).Dispose();
+        }
+    }
+
 }

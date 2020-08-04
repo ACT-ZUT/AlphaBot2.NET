@@ -6,7 +6,6 @@ using System.Management;
 
 using Emgu.CV;
 
-using static DelayHelper.Delay;
 using static Emgu.CV.CvEnum.CapProp;
 
 
@@ -112,7 +111,7 @@ namespace AlphaBot2
                 _camera.Retrieve(frame, 0);
                 frame.Save($@"/home/pi/dataset/test_{date.Year:D4}{date.Month:D2}{date.Day:D2}_{date.Hour:D2}{date.Minute:D2}{date.Millisecond:D3}.jpg");
                 Console.WriteLine("Frame Processed");
-                DelayMilliseconds(25, true); // need to calculate how much time it takes to process one frame (saving is longest)
+                ///DelayHelper.DelayMilliseconds(25, true); // need to calculate how much time it takes to process one frame (saving is longest)
                 //VideoW.Write(frame);
                 //rest of processing 
             }

@@ -15,12 +15,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ws2812b", "Ws2812b\Ws2812b.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Camera", "Camera\Camera.csproj", "{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Delay", "Delay\Delay.csproj", "{00686497-A1E2-46F8-8E71-BC98C06F33C3}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C6C1531D-E87D-40E3-B774-8C8A69A34E73}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Iot.Device.Bindings", "..\..\..\..\..\..\Git\iot\src\Iot.Device.Bindings\Iot.Device.Bindings.csproj", "{F1D38902-62CC-4DF9-828C-FDEF1B43D268}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Device.Gpio", "..\..\..\..\..\..\Git\iot\src\System.Device.Gpio\System.Device.Gpio.csproj", "{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -104,18 +106,30 @@ Global
 		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|linux-arm.Build.0 = Release|Any CPU
 		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|x64.ActiveCfg = Release|Any CPU
 		{FE917573-788A-4C1D-BEE3-80FEACC2DCEB}.Release|x64.Build.0 = Release|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Debug|linux-arm.Build.0 = Debug|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Debug|x64.Build.0 = Debug|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Release|linux-arm.ActiveCfg = Release|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Release|linux-arm.Build.0 = Release|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Release|x64.ActiveCfg = Release|Any CPU
-		{00686497-A1E2-46F8-8E71-BC98C06F33C3}.Release|x64.Build.0 = Release|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Debug|linux-arm.Build.0 = Debug|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Debug|x64.Build.0 = Debug|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Release|linux-arm.ActiveCfg = Release|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Release|linux-arm.Build.0 = Release|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Release|x64.ActiveCfg = Release|Any CPU
+		{F1D38902-62CC-4DF9-828C-FDEF1B43D268}.Release|x64.Build.0 = Release|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Debug|linux-arm.ActiveCfg = Debug|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Debug|linux-arm.Build.0 = Debug|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Debug|x64.Build.0 = Debug|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|linux-arm.ActiveCfg = Release|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|linux-arm.Build.0 = Release|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|x64.ActiveCfg = Release|Any CPU
+		{7A0A4AC4-CEC5-4EF7-A3CE-B9DAD4C1A86B}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

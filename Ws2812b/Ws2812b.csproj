@@ -5,12 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Iot.Device.Bindings" Version="1.0.0" />
-    <PackageReference Include="System.Device.Gpio" Version="1.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Delay\Delay.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\Iot.Device.Bindings\Iot.Device.Bindings.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\System.Device.Gpio\System.Device.Gpio.csproj" />
   </ItemGroup>
 
 </Project>

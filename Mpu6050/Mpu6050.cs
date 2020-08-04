@@ -553,7 +553,7 @@ namespace Iot.Device.Imu
             WriteRegister(Register.USER_CTRL, (byte)UserControls.None);
             // Reset FIFO and DMP
             WriteRegister(Register.USER_CTRL, (byte)UserControls.FIFO_RST);
-            DelayHelper.DelayMilliseconds(15, false);
+            ///DelayHelper.DelayMilliseconds(15, false);
 
             // Configure MPU6050 gyro and accelerometer for bias calculation
             // Set low-pass filter to 184 Hz
@@ -569,7 +569,7 @@ namespace Iot.Device.Imu
             FifoModes = FifoModes.GyroscopeX | FifoModes.GyroscopeY | FifoModes.GyroscopeZ | FifoModes.Accelerometer;
             // accumulate 40 samples in 40 milliseconds = 480 bytes
             // Do not exceed 512 bytes max buffer
-            DelayHelper.DelayMilliseconds(40, false);
+            ///DelayHelper.DelayMilliseconds(40, false);
             // We have our data, deactivate FIFO
             FifoModes = FifoModes.None;
 
@@ -677,7 +677,7 @@ namespace Iot.Device.Imu
             WriteRegister(Register.USER_CTRL, (byte)(userControls | (byte)UserControls.I2C_MST_EN));
             i2cMaster = (byte)(i2cMaster & (~(byte)(I2cBusFrequency.Frequency348kHz) | (byte)I2cBusFrequency.Frequency400kHz));
             WriteRegister(Register.I2C_MST_CTRL, i2cMaster);
-            DelayHelper.DelayMilliseconds(10, false);
+            ///DelayHelper.DelayMilliseconds(10, false);
 
             // Finally store the acceleration bias
             _accelerometerBias = acceBias / AccSensitivity;
@@ -919,7 +919,7 @@ namespace Iot.Device.Imu
             _i2cDevice.Write(dataout);
             // Just need to wait a very little bit
             // For data transfer to happen and process on the MPU9250 side
-            DelayHelper.DelayMicroseconds(140 + readBytes.Length * 10, false);
+            ///DelayHelper.DelayMicroseconds(140 + readBytes.Length * 10, false);
             _i2cDevice.WriteByte((byte)Register.EXT_SENS_DATA_00);
             _i2cDevice.Read(readBytes);
         }

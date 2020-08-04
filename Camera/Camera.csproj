@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Delay\Delay.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\Iot.Device.Bindings\Iot.Device.Bindings.csproj" />
   </ItemGroup>
 
   <ItemGroup>

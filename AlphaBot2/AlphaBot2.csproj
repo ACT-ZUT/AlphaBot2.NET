@@ -6,10 +6,10 @@
     <Company>ACT Science Club</Company>
     <Platforms>AnyCPU</Platforms>
     <PackageId>AlphaBot2.NET</PackageId>
-    <AssemblyVersion>0.5.*</AssemblyVersion>
+    <AssemblyVersion>0.6.*</AssemblyVersion>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <Deterministic>false</Deterministic>
-    <Version>0.5</Version>
+    <Version>0.6</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,16 +18,12 @@
 
   <ItemGroup>
     <PackageReference Include="Emgu.CV" Version="4.2.0.3662" />
-    <PackageReference Include="Iot.Device.Bindings" Version="1.0.0" />
-    <PackageReference Include="System.Device.Gpio" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Delay\Delay.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\Iot.Device.Bindings\Iot.Device.Bindings.csproj" />
+    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\System.Device.Gpio\System.Device.Gpio.csproj" />
     <ProjectReference Include="..\Camera\Camera.csproj" />
-    <ProjectReference Include="..\IrReceiver\IrReceiver.csproj" />
-    <ProjectReference Include="..\Mpu6050\Mpu6050.csproj" />
-    <ProjectReference Include="..\Tlc1543\Tlc1543.csproj" />
     <ProjectReference Include="..\Ws2812b\Ws2812b.csproj" />
   </ItemGroup>
 
