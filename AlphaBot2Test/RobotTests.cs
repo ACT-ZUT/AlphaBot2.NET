@@ -23,16 +23,13 @@ namespace AlphaBot2Test
         [TestCase(new int[] { 1000, 50, 50, 1000, 1000 }, ExpectedResult = -25)]
         [TestCase(new int[] { 1000, 50, 50, 50, 1000 }, ExpectedResult = 0)]
         [TestCase(new int[] { 50, 50, 50, 50, 50 }, ExpectedResult = 0)]
+        [TestCase(new int[] { 1000, 1000, 50, 50, 1000 }, ExpectedResult = 25)]
         [TestCase(new int[] { 1000, 1000, 50, 50, 50 }, ExpectedResult = 50)]
         [TestCase(new int[] { 1000, 1000, 1000, 50, 50 }, ExpectedResult = 75)]
         [TestCase(new int[] { 1000, 1000, 1000, 1000, 50 }, ExpectedResult = 100)]
-        public double TestRangeADC(int[] valuesArray)
+        public double TestADCtoLine(int[] valuesArray)
         {
             List<int> values = valuesArray.ToList();
-            for (int i = 0; i < 2; i++)
-            {
-                _robot.FindLine(values);
-            }
             var ADCLineValue = _robot.FindLine(values);
             var result = (ADCLineValue >= -100) & (ADCLineValue <= 100);
             Assert.IsTrue(result, "ADC Line Value out of Range");

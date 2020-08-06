@@ -20,7 +20,6 @@ namespace AlphaBot2
     public class AlphaBot2
     {
         private CpuTemperature cpuTemperature;
-        private Logger logger;
 
         private DCMotor motorL; private DCMotor motorR;
         private Camera camera;
@@ -43,71 +42,71 @@ namespace AlphaBot2
         //Change to normal class
         public AlphaBot2(List<string> argsList)
         {
-            if (argsList.Count > 0 && typeof(AlphaBot2).Assembly.GetName().ProcessorArchitecture == ProcessorArchitecture.Arm)
-            {
-                switch (argsList[0])
-                {
-                    case "camera":
-                        Enable(camera);
-                        Testing.CameraTest(argsList, camera);
-                        break;
+            //if (argsList.Count > 0 && typeof(AlphaBot2).Assembly.GetName().ProcessorArchitecture == ProcessorArchitecture.Arm)
+            //{
+            //    switch (argsList[0])
+            //    {
+            //        case "camera":
+            //            Enable(camera);
+            //            Testing.CameraTest(argsList, camera);
+            //            break;
 
-                    case "imu":
-                        Enable(imu);
-                        Testing.ImuTest(argsList, imu);
-                        break;
+            //        case "imu":
+            //            Enable(imu);
+            //            Testing.ImuTest(argsList, imu);
+            //            break;
 
-                    case "motor":
-                        Enable(motorL, motorR);
-                        Testing.MotorTest(argsList, motorL, motorR);
-                        break;
+            //        case "motor":
+            //            Enable(motorL, motorR);
+            //            Testing.MotorTest(argsList, motorL, motorR);
+            //            break;
 
-                    case "adc":
-                        Enable(adc);
-                        Testing.AdcTest(argsList, adc);
-                        break;
+            //        case "adc":
+            //            Enable(adc);
+            //            Testing.AdcTest(argsList, adc);
+            //            break;
 
-                    case "adc1":
-                        Enable(adc);
-                        Testing.AdcTest1(argsList, adc);
-                        break;
+            //        case "adc1":
+            //            Enable(adc);
+            //            Testing.AdcTest1(argsList, adc);
+            //            break;
 
-                    case "ir":
-                        Enable(ir);
-                        Testing.IrTest(argsList, ir);
-                        break;
+            //        case "ir":
+            //            Enable(ir);
+            //            Testing.IrTest(argsList, ir);
+            //            break;
 
-                    case "ir1":
-                        Enable(ir);
-                        Testing.IrTest1(argsList, ir);
-                        break;
+            //        case "ir1":
+            //            Enable(ir);
+            //            Testing.IrTest1(argsList, ir);
+            //            break;
 
-                    case "sonar":
-                        Enable(sonar);
-                        //Testing.Sonar(argsList, sonar);
-                        break;
+            //        case "sonar":
+            //            Enable(sonar);
+            //            //Testing.Sonar(argsList, sonar);
+            //            break;
 
-                    case "led":
-                        Enable(led);
-                        Testing.LedTest(argsList, led);
-                        break;
+            //        case "led":
+            //            Enable(led);
+            //            Testing.LedTest(argsList, led);
+            //            break;
 
-                    case "line":
-                        Enable(adc);
-                        FindLine(argsList);
-                        //FollowLine();
-                        //Testing.LedTest(argsList, led);
-                        break;
+            //        case "line":
+            //            Enable(adc);
+            //            FindLine();
+            //            //FollowLine();
+            //            //Testing.LedTest(argsList, led);
+            //            break;
 
-                    case "timing":
-                        Testing.Timing(argsList);
-                        break;
+            //        case "timing":
+            //            Testing.Timing(argsList);
+            //            break;
 
-                    default:
-                        Console.WriteLine("Default case");
-                        break;
-                }
-            }
+            //        default:
+            //            Console.WriteLine("Default case");
+            //            break;
+            //    }
+            //}
         }
 
         public void FollowLine()
@@ -157,14 +156,8 @@ namespace AlphaBot2
         /// to fix/change
         /// </summary>
         /// <param name="argsList"></param>
-        public void FindLine(List<string> argsList)
+        public (double, double) FindLine()
         {
-
-            Console.WriteLine($"FindLine");
-            double delay;
-            if (argsList.Count > 1) delay = Convert.ToDouble(argsList[1]);
-            else delay = 100;
-            int line = 0;
             List<Tlc1543.Channel> channelList = new List<Tlc1543.Channel> {
                 Tlc1543.Channel.A0,
                 Tlc1543.Channel.A1,
@@ -181,57 +174,42 @@ namespace AlphaBot2
 
             Enable(motorL, motorR);
 
-
             while (true)
             {
                 List<int> values = adc.ReadChannels(channelList); //read data
-                line = 0;
+                var line = FindLine(values);
                 for (int i = 0; i < values.Count; i++)
                 {
-                    line <<= 1;
                     if (values[i] < 300)
                     {
-                        line++;
                         tuple[i] = new LineSensor(channelList[i], values[i], true);
                     }
                     else
                     {
                         tuple[i] = new LineSensor(channelList[i], values[i], false);
                     }
-                    line <<= 1;
-                    //Console.Write($"{i}: {values[i],4} ");
+                    Console.Write($"{i}: {values[i],4} ");
                 }
-                if(line > 0 & line < 32)
+
+                if(line < 0)
                 {
-                    Console.WriteLine($"line: {Convert.ToString(line, toBase: 2)} (right)");
-                    motorL.Speed = 0.25;
-                    motorR.Speed = 0.0;
-                }
-                else if(line >= 32 & line <= 168)
-                {
-                    Console.WriteLine($"line: {Convert.ToString(line, toBase: 2)} (center)");
-                    motorL.Speed = 0.25;
-                    motorR.Speed = 0.25;
-                }
-                else if(line > 168 & line <= 672)
-                {
-                    Console.WriteLine($"line: {Convert.ToString(line, toBase: 2)} (left)");
+                    Console.WriteLine($"line: {line} (left)");
                     motorL.Speed = 0.0;
-                    motorR.Speed = 0.25;
+                    motorR.Speed = (double)line / 400;
                 }
-                else if(line > 672 & line <= 682)
+                else if(line > 0)
                 {
-                    Console.WriteLine($"line: {Convert.ToString(line, toBase: 2)} (split)");
-                    motorL.Speed = 0.0;
+                    Console.WriteLine($"line: {line} (right)");
+                    motorL.Speed = (double)line / 400;
                     motorR.Speed = 0.0;
                 }
                 else
                 {
-                    Console.WriteLine($"line: {Convert.ToString(line, toBase: 2)} (not_found)");
-                    //motorL.Speed = 0.0;
-                    //motorR.Speed = 0.0;
+                    Console.WriteLine($"line: {line} (split)");
+                    motorL.Speed = 0.0;
+                    motorR.Speed = 0.0;
                 }
-                Thread.Sleep((int)delay);
+                Thread.Sleep(10);
                 //Console.WriteLine();
             }
         }
@@ -324,12 +302,6 @@ namespace AlphaBot2
             if (cpuTemperature is null) this.cpuTemperature = new CpuTemperature();
         }
 
-        public void Enable(Logger logger)
-        {
-            if (logger is null) this.logger = new Logger();
-            else { Disable(logger); this.logger = new Logger(); }
-        }
-
         #endregion
 
         #region Disabling Modules
@@ -382,11 +354,6 @@ namespace AlphaBot2
             }
         }
 
-        public void Disable(Logger logger)
-        {
-            logger.Dispose();
-        }
-
         #endregion
 
         #region Dispose
@@ -400,7 +367,6 @@ namespace AlphaBot2
             Disable(motorL);
             Disable(motorR);
             Disable(cpuTemperature);
-            Disable(logger);
         }
 
         #endregion

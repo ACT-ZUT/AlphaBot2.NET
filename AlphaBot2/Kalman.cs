@@ -1,8 +1,8 @@
-﻿namespace Filters
+﻿namespace AlphaBot2
 {
     /*A simplified one dimensional Kalman filter implementation - actually a single variable low pass filter */
 
-    internal class Kalman
+    public class Kalman
     {
         /* Kalman filter variables */
         private double q; //process noise covariance

@@ -1,15 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Company>ACT Science Club</Company>
     <Platforms>AnyCPU</Platforms>
     <PackageId>AlphaBot2.NET</PackageId>
-    <AssemblyVersion>0.6.*</AssemblyVersion>
+    <AssemblyVersion>0.7.*</AssemblyVersion>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <Deterministic>false</Deterministic>
-    <Version>0.6</Version>
+    <Version>0.7.1-dev</Version>
+    <Authors>SaDiablo</Authors>
+    <Product>AlphaBot2.NET</Product>
+    <PackageTags>AlphaBot2</PackageTags>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ACT-ZUT/AlphaBot2.NET</RepositoryUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <FileVersion>0.7.1.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
