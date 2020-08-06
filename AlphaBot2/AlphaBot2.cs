@@ -17,7 +17,7 @@ using System.Threading;
 
 namespace AlphaBot2
 {
-    public class AlphaBot2
+    public class AlphaBot
     {
         private CpuTemperature cpuTemperature;
 
@@ -40,73 +40,9 @@ namespace AlphaBot2
         List<LineSensor> tupleSensors = new List<LineSensor>();
 
         //Change to normal class
-        public AlphaBot2(List<string> argsList)
+        public AlphaBot()
         {
-            //if (argsList.Count > 0 && typeof(AlphaBot2).Assembly.GetName().ProcessorArchitecture == ProcessorArchitecture.Arm)
-            //{
-            //    switch (argsList[0])
-            //    {
-            //        case "camera":
-            //            Enable(camera);
-            //            Testing.CameraTest(argsList, camera);
-            //            break;
-
-            //        case "imu":
-            //            Enable(imu);
-            //            Testing.ImuTest(argsList, imu);
-            //            break;
-
-            //        case "motor":
-            //            Enable(motorL, motorR);
-            //            Testing.MotorTest(argsList, motorL, motorR);
-            //            break;
-
-            //        case "adc":
-            //            Enable(adc);
-            //            Testing.AdcTest(argsList, adc);
-            //            break;
-
-            //        case "adc1":
-            //            Enable(adc);
-            //            Testing.AdcTest1(argsList, adc);
-            //            break;
-
-            //        case "ir":
-            //            Enable(ir);
-            //            Testing.IrTest(argsList, ir);
-            //            break;
-
-            //        case "ir1":
-            //            Enable(ir);
-            //            Testing.IrTest1(argsList, ir);
-            //            break;
-
-            //        case "sonar":
-            //            Enable(sonar);
-            //            //Testing.Sonar(argsList, sonar);
-            //            break;
-
-            //        case "led":
-            //            Enable(led);
-            //            Testing.LedTest(argsList, led);
-            //            break;
-
-            //        case "line":
-            //            Enable(adc);
-            //            FindLine();
-            //            //FollowLine();
-            //            //Testing.LedTest(argsList, led);
-            //            break;
-
-            //        case "timing":
-            //            Testing.Timing(argsList);
-            //            break;
-
-            //        default:
-            //            Console.WriteLine("Default case");
-            //            break;
-            //    }
-            //}
+            
         }
 
         public void FollowLine()
@@ -172,7 +108,7 @@ namespace AlphaBot2
                 tuple.Add(new LineSensor(channel, 0, false));
             }
 
-            Enable(motorL, motorR);
+            Enable(Accessories.Motors);
 
             while (true)
             {
@@ -225,152 +161,233 @@ namespace AlphaBot2
 
         #region Enabling modules
 
-        public void Enable(Camera camera)
+        public void Enable(Accessories accessory)
         {
-            if (camera is null) this.camera = new Camera();
-            else { Disable(camera); this.camera = new Camera(); }
-        }
-
-        public void Enable(Mpu6050 imu)
-        {
-            if (imu is null)
+            switch (accessory)
             {
-                this.imu = new Mpu6050(I2cDevice.Create(
-                            new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
+                case Accessories.Camera:
+                    if (camera is null) this.camera = new Camera();
+                    else { Disable(Accessories.Camera); this.camera = new Camera(); }
+                    break;
+
+                case Accessories.IMU:
+                    if (imu is null)
+                    {
+                        this.imu = new Mpu6050(I2cDevice.Create(
+                                    new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
+                    }
+                    else
+                    {
+                        Disable(Accessories.IMU);
+                        this.imu = new Mpu6050(I2cDevice.Create(
+                                    new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
+                    }
+                    break;
+
+                case Accessories.MotorL:
+                    if (motorL is null) this.motorL = DCMotor.Create(6, 12, 13);
+                    else { Disable(Accessories.MotorL); this.motorL = DCMotor.Create(6, 12, 13); }
+                    break;
+
+                case Accessories.MotorR:
+                    if (motorR is null) this.motorR = DCMotor.Create(26, 20, 21);
+                    else { Disable(Accessories.MotorR); this.motorR = DCMotor.Create(26, 20, 21); }
+                    break;
+
+                case Accessories.Motors:
+                    Enable(Accessories.MotorL);
+                    Enable(Accessories.MotorR);
+                    break;
+
+                case Accessories.ADC:
+                    if (adc is null) this.adc = new Tlc1543(24, 5, 23, 25);
+                    else { Disable(Accessories.ADC); this.adc = new Tlc1543(24, 5, 23, 25); }
+                    break;
+
+                case Accessories.IR:
+                    if (ir is null) this.ir = new IrReceiver(17);
+                    else { Disable(Accessories.IR); this.ir = new IrReceiver(17); }
+                    break;
+
+                case Accessories.Sonar:
+                    if (sonar is null) this.sonar = new Hcsr04(22, 27);
+                    else { Disable(Accessories.Sonar); this.sonar = new Hcsr04(22, 27); }
+                    break;
+
+                case Accessories.LED:
+                    if (led is null) this.led = new Ws2812b(18, 4);
+                    else { Disable(Accessories.LED); this.led = new Ws2812b(18, 4); }
+                    break;
+
+                case Accessories.CPUTemp:
+                    if (cpuTemperature is null) this.cpuTemperature = new CpuTemperature();
+                    //else { Disable(led); this.led = new Ws2812b(18, 4); }
+                    break;
+
+                case Accessories.All:
+                    foreach (var item in Enum.GetValues(typeof(Accessories)))
+                    {
+                        Enable((Accessories)item);
+                    }
+                    break;
+
+                default:
+                    Console.WriteLine("Default case");
+                    break;
             }
-            else 
-            {
-                Disable(imu);
-                this.imu = new Mpu6050(I2cDevice.Create(
-                            new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
-            }
-        }
-
-        public void Enable(Tlc1543 adc)
-        {
-            if (adc is null) this.adc = new Tlc1543(24, 5, 23, 25);
-            else { Disable(adc); this.adc = new Tlc1543(24, 5, 23, 25); }
-        }
-
-        public void Enable(IrReceiver ir)
-        {
-            if (ir is null) this.ir = new IrReceiver(17);
-            else { Disable(ir); this.ir = new IrReceiver(17); }
-        }
-
-        public void Enable(Hcsr04 sonar)
-        {
-            if (sonar is null) this.sonar = new Hcsr04(22, 27);
-            else { Disable(sonar); this.sonar = new Hcsr04(22, 27); }
-        }
-
-        public void Enable(Ws2812b led)
-        {
-            if (led is null) this.led = new Ws2812b(18, 4);
-            else { Disable(led); this.led = new Ws2812b(18, 4); }
-        }
-
-        public void Enable(DCMotor motorL, DCMotor motorR)
-        {
-            // 1 pin mode
-            // using (DCMotor motor = DCMotor.Create(6))
-            // using (DCMotor motor = DCMotor.Create(PwmChannel.Create(0, 0, frequency: 50)))
-            // 2 pin mode
-            // using (DCMotor motor = DCMotor.Create(27, 22))
-            // using (DCMotor motor = DCMotor.Create(new SoftwarePwmChannel(27, frequency: 50), 22))
-            // 3 pin mode
-            // using (DCMotor motor = DCMotor.Create(PwmChannel.Create(0, 0, frequency: 50), 23, 24))
-            //DCMotor motor2 = DCMotor.Create(26, 20, 21);
-            //motorL = DCMotor.Create(6, 12, 13);
-            //motorR = DCMotor.Create(new SoftwarePwmChannel(26, 400, usePrecisionTimer: true), 20, 21);
-
-            if (motorL is null) this.motorL = DCMotor.Create(6, 12, 13);
-            else { Disable(motorL); this.motorL = DCMotor.Create(6, 12, 13); }
-
-            if (motorR is null) this.motorR = DCMotor.Create(26, 20, 21);
-            else { Disable(motorR); this.motorR = DCMotor.Create(26, 20, 21); }
-
-            //if (motorL is null) this.motorL = DCMotor.Create(PwmChannel.Create(0, 0, frequency: 500));
-            //else { Disable(motorL); this.motorL = DCMotor.Create(PwmChannel.Create(0, 0, frequency: 500)); }
-
-            //if (motorR is null) this.motorR = DCMotor.Create(PwmChannel.Create(0, 0, frequency: 500));
-            //else { Disable(motorR); this.motorR = DCMotor.Create(PwmChannel.Create(0, 0, frequency: 500)); }
-        }
-
-        public void Enable(CpuTemperature cpuTemperature)
-        {
-            if (cpuTemperature is null) this.cpuTemperature = new CpuTemperature();
+            
         }
 
         #endregion
 
         #region Disabling Modules
-
-        public void Disable(Camera camera)
+        public void Disable(Accessories accessory)
         {
-            camera.Dispose();
-        }
-
-        public void Disable(Mpu6050 imu)
-        {
-            imu.Dispose();
-        }
-
-        public void Disable(Tlc1543 adc)
-        {
-            //adc = null;
-            adc.Dispose();
-        }
-
-        public void Disable(IrReceiver ir)
-        {
-            ir.Dispose();
-        }
-
-        public void Disable(Hcsr04 sonar)
-        {
-            sonar.Dispose();
-        }
-
-        public void Disable(Ws2812b led)
-        {
-            led.Dispose();
-        }
-
-        public void Disable(DCMotor motor)
-        {
-            if (motor != null)
+            switch (accessory)
             {
-                motor.Speed = 0;
-            }
-            motor.Dispose();
-        }
+                case Accessories.Camera:
+                    camera.Dispose();
+                    break;
 
-        public void Disable(CpuTemperature cpuTemperature)
-        {
-            if (cpuTemperature != null)
-            {
-                //implement cleaning procedure (probably saving file with cpuTemperature data)
+                case Accessories.IMU:
+                    imu.Dispose();
+                    break;
+
+                case Accessories.MotorL:
+                    if (motorL != null)
+                    {
+                        motorL.Speed = 0;
+                    }
+                    motorL.Dispose();
+                    break;
+
+                case Accessories.MotorR:
+                    if (motorR != null)
+                    {
+                        motorR.Speed = 0;
+                    }
+                    motorR.Dispose();
+                    break;
+
+                case Accessories.Motors:
+                    Disable(Accessories.MotorL);
+                    Disable(Accessories.MotorR);
+                    break;
+
+                case Accessories.ADC:
+                    //adc = null;
+                    adc.Dispose();
+                    break;
+
+                case Accessories.IR:
+                    ir.Dispose();
+                    break;
+
+                case Accessories.Sonar:
+                    sonar.Dispose();
+                    break;
+
+                case Accessories.LED:
+                    led.Dispose();
+                    break;
+
+                case Accessories.CPUTemp:
+                    cpuTemperature = null;
+                    break;
+
+                case Accessories.All:
+                    foreach (var item in Enum.GetValues(typeof(Accessories)))
+                    {
+                        if((Accessories)item != Accessories.All)
+                        {
+                            Disable((Accessories)item);
+                        }
+                    }
+                    break;
+
+                default:
+                    Console.WriteLine("Default case");
+                    break;
             }
+
         }
 
         #endregion
 
         #region Dispose
 
-        ~AlphaBot2()
+        ~AlphaBot()
         {
-            Disable(camera);
-            Disable(imu);
-            Disable(adc);
-            Disable(ir);
-            Disable(motorL);
-            Disable(motorR);
-            Disable(cpuTemperature);
+            Disable(Accessories.All);
         }
 
         #endregion
 
         public event EventHandler valueChanged;
+
+        #region Enums
+
+        /// <summary>
+        /// Available Accessories on AlphaBot2
+        /// </summary>
+        public enum Accessories
+        {
+            /// <summary>
+            /// ADC
+            /// </summary>
+            ADC = 0,
+
+            /// <summary>
+            /// Camera
+            /// </summary>
+            Camera = 1,
+
+            /// <summary>
+            /// IR
+            /// </summary>
+            IR = 2,
+
+            /// <summary>
+            /// IMU
+            /// </summary>
+            IMU = 3,
+
+            /// <summary>
+            /// Sonar
+            /// </summary>
+            Sonar = 4,
+
+            /// <summary>
+            /// MotorL
+            /// </summary>
+            MotorL = 5,
+
+            /// <summary>
+            /// MotorR
+            /// </summary>
+            MotorR = 6,
+
+            /// <summary>
+            /// Both motors
+            /// </summary>
+            Motors = 7,
+
+            /// <summary>
+            /// LED
+            /// </summary>
+            LED = 8,
+
+            /// <summary>
+            /// CPUTemp
+            /// </summary>
+            CPUTemp = 9,
+
+            /// <summary>
+            /// All
+            /// </summary>
+            All = 100
+        }
+
+        #endregion
     }
 }

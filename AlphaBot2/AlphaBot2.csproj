@@ -9,7 +9,7 @@
     <AssemblyVersion>0.7.*</AssemblyVersion>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <Deterministic>false</Deterministic>
-    <Version>0.7.1-dev</Version>
+    <Version>0.7.2-dev</Version>
     <Authors>SaDiablo</Authors>
     <Product>AlphaBot2.NET</Product>
     <PackageTags>AlphaBot2</PackageTags>
