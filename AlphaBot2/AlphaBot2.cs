@@ -1,17 +1,17 @@
-﻿using Iot.Device.Adc;
+using Iot.Device.Adc;
 using Iot.Device.CpuTemperature;
 using Iot.Device.DCMotor;
 using Iot.Device.Hcsr04;
 using Iot.Device.Imu;
 using Iot.Device.IrReceiver;
 
-//using Iot.Device.Ws28xx;
 using Iot.Device.Ws2812b;
 using System;
 using System.Collections.Generic;
 using System.Device;
 using System.Device.I2c;
 using System.Device.Pwm;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 
@@ -20,7 +20,6 @@ namespace AlphaBot2
     public class AlphaBot
     {
         private CpuTemperature cpuTemperature;
-
         private DCMotor motorL; private DCMotor motorR;
         private Camera camera;
         private Mpu6050 imu;
@@ -28,8 +27,8 @@ namespace AlphaBot2
         private Hcsr04 sonar;
         private Ws2812b led;
         private IrReceiver ir;
-
-        private double delay = 10;
+        private static double mainSpeed = 10;
+        private static double delay = 10;
         private List<Tlc1543.Channel> channelList = new List<Tlc1543.Channel> {
                 Tlc1543.Channel.A0,
                 Tlc1543.Channel.A1,
@@ -37,16 +36,10 @@ namespace AlphaBot2
                 Tlc1543.Channel.A3,
                 Tlc1543.Channel.A4
             };
-        List<LineSensor> tupleSensors = new List<LineSensor>();
 
-        //Change to normal class
         public AlphaBot()
         {
             
-        }
-
-        public void FollowLine()
-        {
         }
 
         public struct LineSensor
@@ -89,10 +82,11 @@ namespace AlphaBot2
         }
 
         /// <summary>
-        /// to fix/change
+        /// 
         /// </summary>
-        /// <param name="argsList"></param>
-        public (double, double) FindLine()
+        /// <param name="speed">Values ranging from -100 to 100</param>
+        /// <returns>SpeedL and SpeedR</returns>
+        public (double, double) SetSpeed(double speed)
         {
             List<Tlc1543.Channel> channelList = new List<Tlc1543.Channel> {
                 Tlc1543.Channel.A0,
@@ -154,9 +148,39 @@ namespace AlphaBot2
         /// Change parameters
         /// </summary>
         /// <returns></returns>
-        public bool SetParameter()
+        public bool SetParameter(Parameters parameter, object value)
         {
-            return false;
+            bool result;
+            object valueBefore;
+            switch (parameter)
+            {
+                case Parameters.Delay:
+                    valueBefore = delay;
+                    result = Double.TryParse(value.ToString(), out delay);
+                    break;
+                case Parameters.MainSpeed:
+                    valueBefore = mainSpeed;
+                    result = Double.TryParse(value.ToString(), out mainSpeed);
+                    break;
+                default:
+                    valueBefore = Double.NaN;
+                    result = false;
+                    break;
+            }
+
+#if DEBUG
+            if (result)
+            {
+                Debug.WriteLine($"Parameter {Enum.GetName(typeof(Parameters), parameter)} set to: {value}, was: {valueBefore}");
+                Console.WriteLine($"Parameter {Enum.GetName(typeof(Parameters), parameter)} set to: {value}, was: {valueBefore}");
+            }
+            else
+            {
+                Debug.WriteLine($"Could not set Parameter {Enum.GetName(typeof(Parameters), parameter)} to: {value}, still is: {valueBefore}");
+                Console.WriteLine($"Could not set Parameter {Enum.GetName(typeof(Parameters), parameter)} to: {value}, still is: {valueBefore}");
+            }
+#endif
+            return result;
         }
 
         #region Enabling modules
@@ -323,8 +347,6 @@ namespace AlphaBot2
 
         #endregion
 
-        public event EventHandler valueChanged;
-
         #region Enums
 
         /// <summary>
@@ -388,6 +410,21 @@ namespace AlphaBot2
             All = 100
         }
 
+        /// <summary>
+        /// Available parameters to change from outside of this class
+        /// </summary>
+        public enum Parameters
+        {
+            /// <summary>
+            /// Delay
+            /// </summary>
+            Delay = 0,
+
+            /// <summary>
+            /// Main Speed
+            /// </summary>
+            MainSpeed = 1
+        }
         #endregion
     }
 }
