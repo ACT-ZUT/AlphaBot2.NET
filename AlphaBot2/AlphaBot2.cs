@@ -42,106 +42,132 @@ namespace AlphaBot2
             
         }
 
-        public struct LineSensor
+        /// <summary>
+        /// Calculates and sets the speed of the motors depending on <paramref name="MainSpeed"/> parameter.
+        /// <br>Motor speeds are calculated from <paramref name="MainSpeed"/> parameter and <paramref name="speed"/> value </br>
+        /// <br>by adding to one motor and substracting from the other to create differential steering.</br>
+        /// <para>Below 0 = turn left; Above 0 = turn right.</para>
+        /// </summary>
+        /// <param name="speed">Value offsetting mainSpeed variable clamped at -100 to 100</param>
+        /// <returns>Calculated and clamped from -100 to 100 values of <paramref name="speedL"/> and <paramref name="speedR"/></returns>
+        public (double, double) SetSpeed(double speed)
         {
-            public Tlc1543.Channel Channel { get; set; }
-            public int Value { get; set; }
-            public bool IsBlack { get; set; }
-
-            public LineSensor(Tlc1543.Channel Channel, int Value, bool IsBlack)
+            if (motorL == null || motorR == null)
             {
-                this.Channel = Channel;
-                this.Value = Value;
-                this.IsBlack = IsBlack;
+                Enable(Accessories.Motors);
+
             }
+            double speedL = 0.0;
+            double speedR = 0.0;
+            if (speed > 0.0)
+            {
+                speedL = mainSpeed + Math.Abs(speed);
+                speedR = mainSpeed - Math.Abs(speed);
+            }
+            if (speed < 0.0)
+            {
+                speedL = mainSpeed - Math.Abs(speed);
+                speedR = mainSpeed + Math.Abs(speed);
+            }
+            if (speed == 0.0)
+            {
+                speedL = mainSpeed;
+                speedR = mainSpeed;
+            }
+
+            speedL = Clamp(speedL, -100, 100);
+            speedR = Clamp(speedR, -100, 100);
+
+            try
+            {
+                motorL.Speed = speedL / 100;
+                motorR.Speed = speedR / 100;
+            }
+            catch (Exception) { }
+
+            return (speedL, speedR);
+        }
+
+        /// <summary>
+        /// Sets the speed of the motors. 
+        /// <br>Values can range from -100 to 100 where 100 is max speed, 0 equals no movement and -100 is movement in opposite direction</br>
+        /// </summary>
+        /// <param name="speedL">Value to set to left motor clamped at -100 to 100</param>
+        /// <param name="speedR">Value to set to right motor clamped at -100 to 100></param>
+        /// <returns>Clamped <paramref name="speedL"/> and <paramref name="speedR"/> values</returns>
+        public (double, double) SetSpeed(double speedL, double speedR)
+        {
+            if (motorL == null || motorR == null)
+            {
+                Enable(Accessories.Motors);
+            }
+
+            speedL = Clamp(speedL, -100, 100);
+            speedR = Clamp(speedR, -100, 100);
+
+            try
+            {
+                motorL.Speed = speedL / 100;
+                motorR.Speed = speedR / 100;
+            }
+            catch (Exception) { }
+            
+            return (speedL, speedR);
         }
 
         /// <summary>
         /// Function providing sensors readout
-        /// showing if there is a black line visible 
-        /// underneat the robot
+        /// and calculating position of 
+        /// black line underneath the robot
         /// </summary>
-        /// <returns>Decimal value ranging from -100 to 100 (left to right)</returns>
-        public double? FindLine(List<int> values)
+        /// <returns>
+        /// Decimal value ranging from -100 to 100 (left to right)
+        /// <br>NaN means line was not found</br>
+        /// </returns>
+        public double? GetLineValue()
+        {
+            return GetLineValue(adc.ReadChannels(channelList));
+        }
+        /// <summary>
+        /// Function calculating position of 
+        /// black line underneath the robot
+        /// </summary>
+        /// <param name="values">List of values ranging from 0 to 1023</param>
+        /// <returns>
+        /// Decimal value ranging from -100 to 100 (left to right)
+        /// <br>NaN means line was not found</br>
+        /// </returns>
+        public double? GetLineValue(List<int> values)
         {
             double? ADCLineValue = null;
-
             var lineAverage = 0;
             int foundBlack = 0;
+
             for (int i = 0; i < values.Count; i++)
             {
-                if (values[i] < 300)
+                if (values[i] < 300) // Change it into settable parameter
                 {
                     lineAverage += (i - 2);
                     foundBlack++;
                 }
             }
-            ADCLineValue = ((double)lineAverage / (double)foundBlack)*50;
-            Console.WriteLine(ADCLineValue);
+
+            ADCLineValue = ((double)lineAverage / (double)foundBlack) * 50;
             return ADCLineValue;
         }
 
         /// <summary>
-        /// 
+        /// Limit a variable to the set OutputMax and OutputMin properties
         /// </summary>
-        /// <param name="speed">Values ranging from -100 to 100</param>
-        /// <returns>SpeedL and SpeedR</returns>
-        public (double, double) SetSpeed(double speed)
+        /// <param name="variableToClamp"></param>
+        /// <param name="outputMin"></param>
+        /// <param name="outputMax"></param>
+        /// <returns>A value that is between the OutputMax and OutputMin properties</returns>
+        private double Clamp(double variableToClamp, double outputMin, double outputMax)
         {
-            List<Tlc1543.Channel> channelList = new List<Tlc1543.Channel> {
-                Tlc1543.Channel.A0,
-                Tlc1543.Channel.A1,
-                Tlc1543.Channel.A2,
-                Tlc1543.Channel.A3,
-                Tlc1543.Channel.A4
-            };
-            List<LineSensor> tuple = new List<LineSensor>();
-
-            foreach (var channel in channelList)
-            {
-                tuple.Add(new LineSensor(channel, 0, false));
-            }
-
-            Enable(Accessories.Motors);
-
-            while (true)
-            {
-                List<int> values = adc.ReadChannels(channelList); //read data
-                var line = FindLine(values);
-                for (int i = 0; i < values.Count; i++)
-                {
-                    if (values[i] < 300)
-                    {
-                        tuple[i] = new LineSensor(channelList[i], values[i], true);
-                    }
-                    else
-                    {
-                        tuple[i] = new LineSensor(channelList[i], values[i], false);
-                    }
-                    Console.Write($"{i}: {values[i],4} ");
-                }
-
-                if(line < 0)
-                {
-                    Console.WriteLine($"line: {line} (left)");
-                    motorL.Speed = 0.0;
-                    motorR.Speed = (double)line / 400;
-                }
-                else if(line > 0)
-                {
-                    Console.WriteLine($"line: {line} (right)");
-                    motorL.Speed = (double)line / 400;
-                    motorR.Speed = 0.0;
-                }
-                else
-                {
-                    Console.WriteLine($"line: {line} (split)");
-                    motorL.Speed = 0.0;
-                    motorR.Speed = 0.0;
-                }
-                Thread.Sleep(10);
-                //Console.WriteLine();
-            }
+            if (variableToClamp <= outputMin) { return outputMin; }
+            if (variableToClamp >= outputMax) { return outputMax; }
+            return variableToClamp;
         }
 
         /// <summary>
