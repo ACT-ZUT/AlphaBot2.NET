@@ -11,7 +11,7 @@ using System.IO;
 using System.Numerics;
 using System.Text;
 using System.Threading;
-using Iot.Units;
+using UnitsNet;
 
 namespace Iot.Device.Imu
 {
@@ -340,7 +340,7 @@ namespace Iot.Device.Imu
             ReadBytes(Register.TEMP_OUT_H, rawData);
             // formula from the documentation
             // return Temperature.FromCelsius((BinaryPrimitives.ReadInt16BigEndian(rawData) - 21) / 333.87 + 21);
-            return Temperature.FromCelsius(BinaryPrimitives.ReadInt16BigEndian(rawData)/ 340 + 36.53);
+            return Temperature.FromDegreesCelsius(BinaryPrimitives.ReadInt16BigEndian(rawData) / 340 + 36.53);
         }
 
         #endregion
@@ -957,163 +957,6 @@ namespace Iot.Device.Imu
         #endregion
     }
 
-
-    /// <summary>
-    /// Range of measurement used by the accelerometer in G
-    /// </summary>
-    public enum AccelerometerRange
-    {
-        /// <summary>
-        /// Range 2G
-        /// </summary>
-        Range02G = 0,
-
-        /// <summary>
-        /// Range 4G
-        /// </summary>
-        Range04G = 1,
-
-        /// <summary>
-        /// Range 8G
-        /// </summary>
-        Range08G = 2,
-
-        /// <summary>
-        /// Range 16G
-        /// </summary>
-        Range16G = 3
-    }
-
-    /// <summary>
-    /// Bandwidth used for normal measurement of the accelerometer
-    /// using filter block. This can be further reduced using
-    /// SampleRateDivider with all modes except 1130Hz.
-    /// </summary>
-    public enum AccelerometerBandwidth
-    {
-        /// <summary>
-        /// Bandwidth 1130Hz
-        /// </summary>
-        Bandwidth1130Hz = 0,
-
-        /// <summary>
-        /// Bandwidth 460Hz
-        /// </summary>
-        Bandwidth0460Hz = 0x08,
-
-        /// <summary>
-        /// Bandwidth 184Hz
-        /// </summary>
-        Bandwidth0184Hz = 0x09,
-
-        /// <summary>
-        /// Bandwidth 92Hz
-        /// </summary>
-        Bandwidth0092Hz = 0x0A,
-
-        /// <summary>
-        /// Bandwidth 41Hz
-        /// </summary>
-        Bandwidth0041Hz = 0x0B,
-
-        /// <summary>
-        /// Bandwidth 20Hz
-        /// </summary>
-        Bandwidth0020Hz = 0x0C,
-
-        /// <summary>
-        /// Bandwidth 10Hz
-        /// </summary>
-        Bandwidth0010Hz = 0x0E,
-
-        /// <summary>
-        /// Bandwidth 5Hz
-        /// </summary>
-        Bandwidth0005Hz = 0x0F,
-    }
-
-    /// <summary>
-    /// Range used for the gyroscope precision measurement
-    /// </summary>
-    public enum GyroscopeRange
-    {
-        /// <summary>
-        /// Range 250Dps
-        /// </summary>
-        Range0250Dps = 0,
-
-        /// <summary>
-        /// Range 500Dps
-        /// </summary>
-        Range0500Dps = 1,
-
-        /// <summary>
-        /// Range 1000Dps
-        /// </summary>
-        Range1000Dps = 2,
-
-        /// <summary>
-        /// Range 2000Dps
-        /// </summary>
-        Range2000Dps = 3,
-    }
-
-    /// <summary>
-    /// Gyroscope frequency used for measurement
-    /// </summary>
-    public enum GyroscopeBandwidth
-    {
-        /// <summary>
-        /// Bandwidth 250Hz
-        /// </summary>
-        Bandwidth0250Hz = 0,
-
-        /// <summary>
-        /// Bandwidth 184Hz
-        /// </summary>
-        Bandwidth0184Hz = 1,
-
-        /// <summary>
-        /// Bandwidth 92Hz
-        /// </summary>
-        Bandwidth0092Hz = 2,
-
-        /// <summary>
-        /// Bandwidth 41Hz
-        /// </summary>
-        Bandwidth0041Hz = 3,
-
-        /// <summary>
-        /// Bandwidth 20Hz
-        /// </summary>
-        Bandwidth0020Hz = 4,
-
-        /// <summary>
-        /// Bandwidth 10Hz
-        /// </summary>
-        Bandwidth0010Hz = 5,
-
-        /// <summary>
-        /// Bandwidth 5Hz
-        /// </summary>
-        Bandwidth0005Hz = 6,
-
-        /// <summary>
-        /// Bandwidth 3600Hz
-        /// </summary>
-        Bandwidth3600Hz = 7,
-
-        /// <summary>
-        /// Bandwidth 3600Hz FS 32
-        /// </summary>
-        Bandwidth3600HzFS32 = -1,
-
-        /// <summary>
-        /// Bandwidth 8800Hz FS 32
-        /// </summary>
-        Bandwidth8800HzFS32 = -2,
-    }
-
     /// <summary>
     /// All the documented registers for the MPU99250
     /// </summary>
@@ -1620,6 +1463,209 @@ namespace Iot.Device.Imu
         ZA_OFFSET_L = 0x7E
     }
 
+    internal enum ClockSource
+    {
+        /// <summary>
+        /// Internal 20MHz
+        /// </summary>
+        Internal20MHz = 0,
+
+        /// <summary>
+        /// Auto Select
+        /// </summary>
+        AutoSelect = 1,
+
+        /// <summary>
+        /// Stop Clock
+        /// </summary>
+        StopClock = 7,
+    }
+
+    [Flags]
+    internal enum UserControls
+    {
+        None = 0b0000_0000,
+        // 1 – Reset all gyro digital signal path, accel digital signal path, and temp digital signal path.
+        // This bit also clears all the sensor registers.  SIG_COND_RST is a pulse of one clk8M wide.
+        SIG_COND_RST = 0b0000_0001,
+        // 1 – Reset I2C Master module. Reset is asynchronous.  This bit auto clears after one clock cycle.
+        // NOTE:  This bit should only be set when the I2C master has hung.  If this bit is set during an active I2C master transaction,
+        // the I2C slave will hang, which will require the host to reset the slave.
+        I2C_MST_RST = 0b0000_0010,
+        // 1 – Reset FIFO module. Reset is asynchronous.  This bit auto clears after one clock cycle
+        FIFO_RST = 0b0000_0100,
+        // 1 – Reset I2C Slave module and put the serial interface in SPI mode only.  This bit auto clears after one clock cycle.
+        I2C_IF_DIS = 0b0001_0000,
+        // 1 – Enable the I2C Master I/F module; pins ES_DA and ES_SCL are isolated from pins SDA/SDI and SCL/ SCLK.
+        // 0 – Disable I2C Master I/F module; pins ES_DA and ES_SCL are logically driven by pins SDA/SDI and SCL/ SCLK.
+        // NOTE:  DMP will run when enabled, even if all internal sensors are disabled, except when the sample rate is set to 8Khz
+        I2C_MST_EN = 0b0010_0000,
+        // 1 – Enable FIFO operation mode.
+        // 0 – Disable FIFO access from serial interface.
+        // To disable FIFO writes by dma, use FIFO_EN register.
+        // To disable possible FIFO writes from DMP, disable the DMP.
+        FIFO_EN = 0b0100_0000,
+    }
+
+    /*
+
+    /// <summary>
+    /// Range of measurement used by the accelerometer in G
+    /// </summary>
+    public enum AccelerometerRange
+    {
+        /// <summary>
+        /// Range 2G
+        /// </summary>
+        Range02G = 0,
+
+        /// <summary>
+        /// Range 4G
+        /// </summary>
+        Range04G = 1,
+
+        /// <summary>
+        /// Range 8G
+        /// </summary>
+        Range08G = 2,
+
+        /// <summary>
+        /// Range 16G
+        /// </summary>
+        Range16G = 3
+    }
+
+    /// <summary>
+    /// Bandwidth used for normal measurement of the accelerometer
+    /// using filter block. This can be further reduced using
+    /// SampleRateDivider with all modes except 1130Hz.
+    /// </summary>
+    public enum AccelerometerBandwidth
+    {
+        /// <summary>
+        /// Bandwidth 1130Hz
+        /// </summary>
+        Bandwidth1130Hz = 0,
+
+        /// <summary>
+        /// Bandwidth 460Hz
+        /// </summary>
+        Bandwidth0460Hz = 0x08,
+
+        /// <summary>
+        /// Bandwidth 184Hz
+        /// </summary>
+        Bandwidth0184Hz = 0x09,
+
+        /// <summary>
+        /// Bandwidth 92Hz
+        /// </summary>
+        Bandwidth0092Hz = 0x0A,
+
+        /// <summary>
+        /// Bandwidth 41Hz
+        /// </summary>
+        Bandwidth0041Hz = 0x0B,
+
+        /// <summary>
+        /// Bandwidth 20Hz
+        /// </summary>
+        Bandwidth0020Hz = 0x0C,
+
+        /// <summary>
+        /// Bandwidth 10Hz
+        /// </summary>
+        Bandwidth0010Hz = 0x0E,
+
+        /// <summary>
+        /// Bandwidth 5Hz
+        /// </summary>
+        Bandwidth0005Hz = 0x0F,
+    }
+
+    /// <summary>
+    /// Range used for the gyroscope precision measurement
+    /// </summary>
+    public enum GyroscopeRange
+    {
+        /// <summary>
+        /// Range 250Dps
+        /// </summary>
+        Range0250Dps = 0,
+
+        /// <summary>
+        /// Range 500Dps
+        /// </summary>
+        Range0500Dps = 1,
+
+        /// <summary>
+        /// Range 1000Dps
+        /// </summary>
+        Range1000Dps = 2,
+
+        /// <summary>
+        /// Range 2000Dps
+        /// </summary>
+        Range2000Dps = 3,
+    }
+
+    /// <summary>
+    /// Gyroscope frequency used for measurement
+    /// </summary>
+    public enum GyroscopeBandwidth
+    {
+        /// <summary>
+        /// Bandwidth 250Hz
+        /// </summary>
+        Bandwidth0250Hz = 0,
+
+        /// <summary>
+        /// Bandwidth 184Hz
+        /// </summary>
+        Bandwidth0184Hz = 1,
+
+        /// <summary>
+        /// Bandwidth 92Hz
+        /// </summary>
+        Bandwidth0092Hz = 2,
+
+        /// <summary>
+        /// Bandwidth 41Hz
+        /// </summary>
+        Bandwidth0041Hz = 3,
+
+        /// <summary>
+        /// Bandwidth 20Hz
+        /// </summary>
+        Bandwidth0020Hz = 4,
+
+        /// <summary>
+        /// Bandwidth 10Hz
+        /// </summary>
+        Bandwidth0010Hz = 5,
+
+        /// <summary>
+        /// Bandwidth 5Hz
+        /// </summary>
+        Bandwidth0005Hz = 6,
+
+        /// <summary>
+        /// Bandwidth 3600Hz
+        /// </summary>
+        Bandwidth3600Hz = 7,
+
+        /// <summary>
+        /// Bandwidth 3600Hz FS 32
+        /// </summary>
+        Bandwidth3600HzFS32 = -1,
+
+        /// <summary>
+        /// Bandwidth 8800Hz FS 32
+        /// </summary>
+        Bandwidth8800HzFS32 = -2,
+    }
+
+    
     /// <summary>
     /// Disable modes for the gyroscope and accelerometer axes
     /// </summary>
@@ -1693,31 +1739,7 @@ namespace Iot.Device.Imu
         Slave4 = 4,
     }
 
-    [Flags]
-    internal enum UserControls
-    {
-        None = 0b0000_0000,
-        // 1 – Reset all gyro digital signal path, accel digital signal path, and temp digital signal path.
-        // This bit also clears all the sensor registers.  SIG_COND_RST is a pulse of one clk8M wide.
-        SIG_COND_RST = 0b0000_0001,
-        // 1 – Reset I2C Master module. Reset is asynchronous.  This bit auto clears after one clock cycle.
-        // NOTE:  This bit should only be set when the I2C master has hung.  If this bit is set during an active I2C master transaction,
-        // the I2C slave will hang, which will require the host to reset the slave.
-        I2C_MST_RST = 0b0000_0010,
-        // 1 – Reset FIFO module. Reset is asynchronous.  This bit auto clears after one clock cycle
-        FIFO_RST = 0b0000_0100,
-        // 1 – Reset I2C Slave module and put the serial interface in SPI mode only.  This bit auto clears after one clock cycle.
-        I2C_IF_DIS = 0b0001_0000,
-        // 1 – Enable the I2C Master I/F module; pins ES_DA and ES_SCL are isolated from pins SDA/SDI and SCL/ SCLK.
-        // 0 – Disable I2C Master I/F module; pins ES_DA and ES_SCL are logically driven by pins SDA/SDI and SCL/ SCLK.
-        // NOTE:  DMP will run when enabled, even if all internal sensors are disabled, except when the sample rate is set to 8Khz
-        I2C_MST_EN = 0b0010_0000,
-        // 1 – Enable FIFO operation mode.
-        // 0 – Disable FIFO access from serial interface.
-        // To disable FIFO writes by dma, use FIFO_EN register.
-        // To disable possible FIFO writes from DMP, disable the DMP.
-        FIFO_EN = 0b0100_0000,
-    }
+
 
     /// <summary>
     /// Frequency of the slave I2C bus
@@ -1859,23 +1881,7 @@ namespace Iot.Device.Imu
         Temperature = 0b1000_0000
     }
 
-    internal enum ClockSource
-    {
-        /// <summary>
-        /// Internal 20MHz
-        /// </summary>
-        Internal20MHz = 0,
 
-        /// <summary>
-        /// Auto Select
-        /// </summary>
-        AutoSelect = 1,
-
-        /// <summary>
-        /// Stop Clock
-        /// </summary>
-        StopClock = 7,
-    }
 
     /// <summary>
     /// Frequency used to measure data for the low power consumption mode
@@ -1943,4 +1949,5 @@ namespace Iot.Device.Imu
         /// </summary>
         Frequency500Hz = 11,
     }
+    */
 }

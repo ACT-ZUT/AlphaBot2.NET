@@ -1,7 +1,7 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 // See the LICENSE file in the project root for more information.
-/*
+
 using System;
 using System.Device;
 using System.Device.Gpio;
@@ -113,7 +113,7 @@ namespace Iot.Device.IrReceiver
             return 0;
         }
 
-        private int GetKeyTemp()
+        public int GetKeyTemp()
         {
             // int[] data = { 0, 0, 0, 0 };
             if (_digital.Read(_iR) == PinValue.High)
@@ -134,4 +134,3 @@ namespace Iot.Device.IrReceiver
 
     }
 }
-*/

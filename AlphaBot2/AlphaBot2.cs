@@ -1,4 +1,4 @@
-﻿using Iot.Device.Adc;
+using Iot.Device.Adc;
 using Iot.Device.CpuTemperature;
 using Iot.Device.DCMotor;
 using Iot.Device.Hcsr04;
@@ -52,11 +52,6 @@ namespace AlphaBot2
         /// <returns>Calculated and clamped from -100 to 100 values of <paramref name="speedL"/> and <paramref name="speedR"/></returns>
         public (double, double) SetSpeed(double speed)
         {
-            if (motorL == null || motorR == null)
-            {
-                Enable(Accessories.Motors);
-
-            }
             double speedL = 0.0;
             double speedR = 0.0;
             if (speed > 0.0)
@@ -74,18 +69,8 @@ namespace AlphaBot2
                 speedL = mainSpeed;
                 speedR = mainSpeed;
             }
-
-            speedL = Clamp(speedL, -100, 100);
-            speedR = Clamp(speedR, -100, 100);
-
-            try
-            {
-                motorL.Speed = speedL / 100;
-                motorR.Speed = speedR / 100;
-            }
-            catch (Exception) { }
-
-            return (speedL, speedR);
+            
+            return SetSpeed(speedL, speedR);
         }
 
         /// <summary>
@@ -197,90 +182,49 @@ namespace AlphaBot2
 #if DEBUG
             if (result)
             {
-                Debug.WriteLine($"Parameter {Enum.GetName(typeof(Parameters), parameter)} set to: {value}, was: {valueBefore}");
+                System.Diagnostics.Debug.WriteLine($"Parameter {Enum.GetName(typeof(Parameters), parameter)} set to: {value}, was: {valueBefore}");
                 Console.WriteLine($"Parameter {Enum.GetName(typeof(Parameters), parameter)} set to: {value}, was: {valueBefore}");
             }
             else
             {
-                Debug.WriteLine($"Could not set Parameter {Enum.GetName(typeof(Parameters), parameter)} to: {value}, still is: {valueBefore}");
+                System.Diagnostics.Debug.WriteLine($"Could not set Parameter {Enum.GetName(typeof(Parameters), parameter)} to: {value}, still is: {valueBefore}");
                 Console.WriteLine($"Could not set Parameter {Enum.GetName(typeof(Parameters), parameter)} to: {value}, still is: {valueBefore}");
             }
 #endif
             return result;
         }
 
+        #region Enabling modules
+
         public void Enable(Accessories accessory)
         {
-            try
+            switch (accessory)
             {
-                switch (accessory)
-                {
-                    case Accessories.Camera:
-                        if (camera is null) this.camera = new Camera();
-                        else { Disable(Accessories.Camera); this.camera = new Camera(); }
-                        break;
+                case Accessories.Camera:
+                    if (camera is null) this.camera = new Camera();
+                    else { Disable(Accessories.Camera); this.camera = new Camera(); }
+                    break;
 
-                    case Accessories.IMU:
-                        if (imu is null)
-                        {
-                            this.imu = new Mpu6050(I2cDevice.Create(
-                                        new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
-                        }
-                        else
-                        {
-                            Disable(Accessories.IMU);
-                            this.imu = new Mpu6050(I2cDevice.Create(
-                                        new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
-                        }
-                        break;
+                case Accessories.IMU:
+                    if (imu is null)
+                    {
+                        this.imu = new Mpu6050(I2cDevice.Create(
+                                    new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
+                    }
+                    else
+                    {
+                        Disable(Accessories.IMU);
+                        this.imu = new Mpu6050(I2cDevice.Create(
+                                    new I2cConnectionSettings(1, Mpu6050.DefaultI2cAddress)));
+                    }
+                    break;
 
-                    case Accessories.MotorL:
-                        if (motorL is null) this.motorL = DCMotor.Create(6, 12, 13);
-                        else { Disable(Accessories.MotorL); this.motorL = DCMotor.Create(6, 12, 13); }
-                        break;
-
-                    case Accessories.MotorR:
-                        if (motorR is null) this.motorR = DCMotor.Create(26, 20, 21);
-                        else { Disable(Accessories.MotorR); this.motorR = DCMotor.Create(26, 20, 21); }
-                        break;
-
-                    case Accessories.Motors:
-                        Enable(Accessories.MotorL);
-                        Enable(Accessories.MotorR);
-                        break;
-
-                    case Accessories.ADC:
-                        if (adc is null) this.adc = new Tlc1543(24, 5, 23, 25);
-                        else { Disable(Accessories.ADC); this.adc = new Tlc1543(24, 5, 23, 25); }
-                        break;
-
-                    case Accessories.IR:
-                        if (ir is null) this.ir = new IrReceiver(17);
-                        else { Disable(Accessories.IR); this.ir = new IrReceiver(17); }
-                        break;
-
-                    case Accessories.Sonar:
-                        if (sonar is null) this.sonar = new Hcsr04(22, 27);
-                        else { Disable(Accessories.Sonar); this.sonar = new Hcsr04(22, 27); }
-                        break;
-
-                    case Accessories.LED:
-                        if (led is null) this.led = new Ws2812b(18, 4);
-                        else { Disable(Accessories.LED); this.led = new Ws2812b(18, 4); }
-                        break;
-
-                    case Accessories.CPUTemp:
-                        if (cpuTemperature is null) this.cpuTemperature = new CpuTemperature();
-                        //else { Disable(led); this.led = new Ws2812b(18, 4); }
-                        break;
-
-                    case Accessories.All:
-                        foreach (var item in Enum.GetValues(typeof(Accessories)))
-                        {
-                            Enable((Accessories)item);
-                        }
-                        break;
-
+<<<<<<< Updated upstream
+                case Accessories.MotorL:
+                    if (motorL is null) this.motorL = DCMotor.Create(6, 12, 13);
+                    else { Disable(Accessories.MotorL); this.motorL = DCMotor.Create(6, 12, 13); }
+                    break;
+=======
                     default:
                         Console.WriteLine("Something went wrong (Enabling accessories)");
                         break;
@@ -288,94 +232,141 @@ namespace AlphaBot2
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Enabling accessory: {Enum.GetName(typeof(Accessories), accessory)} failed.");
-                Debug.WriteLine($"Exception message: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Enabling accessory: {Enum.GetName(typeof(Accessories), accessory)} failed.");
+                System.Diagnostics.Debug.WriteLine($"Exception message: {ex.Message}");
+>>>>>>> Stashed changes
 
-                Console.WriteLine($"Enabling accessory: {Enum.GetName(typeof(Accessories), accessory)} failed.");
-                Console.WriteLine($"Exception message: {ex.Message}");
+                case Accessories.MotorR:
+                    if (motorR is null) this.motorR = DCMotor.Create(26, 20, 21);
+                    else { Disable(Accessories.MotorR); this.motorR = DCMotor.Create(26, 20, 21); }
+                    break;
+
+                case Accessories.Motors:
+                    Enable(Accessories.MotorL);
+                    Enable(Accessories.MotorR);
+                    break;
+
+                case Accessories.ADC:
+                    if (adc is null) this.adc = new Tlc1543(24, 5, 23, 25);
+                    else { Disable(Accessories.ADC); this.adc = new Tlc1543(24, 5, 23, 25); }
+                    break;
+
+                case Accessories.IR:
+                    if (ir is null) this.ir = new IrReceiver(17);
+                    else { Disable(Accessories.IR); this.ir = new IrReceiver(17); }
+                    break;
+
+                case Accessories.Sonar:
+                    if (sonar is null) this.sonar = new Hcsr04(22, 27);
+                    else { Disable(Accessories.Sonar); this.sonar = new Hcsr04(22, 27); }
+                    break;
+
+                case Accessories.LED:
+                    if (led is null) this.led = new Ws2812b(18, 4);
+                    else { Disable(Accessories.LED); this.led = new Ws2812b(18, 4); }
+                    break;
+
+                case Accessories.CPUTemp:
+                    if (cpuTemperature is null) this.cpuTemperature = new CpuTemperature();
+                    //else { Disable(led); this.led = new Ws2812b(18, 4); }
+                    break;
+
+                case Accessories.All:
+                    foreach (var item in Enum.GetValues(typeof(Accessories)))
+                    {
+                        Enable((Accessories)item);
+                    }
+                    break;
+
+                default:
+                    Console.WriteLine("Default case");
+                    break;
             }
-
+            
         }
 
+        #endregion
+
+        #region Disabling Modules
         public void Disable(Accessories accessory)
         {
-            try
+            switch (accessory)
             {
-                switch (accessory)
-                {
-                    case Accessories.Camera:
-                        camera.Dispose();
-                        break;
+                case Accessories.Camera:
+                    camera.Dispose();
+                    break;
 
-                    case Accessories.IMU:
-                        imu.Dispose();
-                        break;
+                case Accessories.IMU:
+                    imu.Dispose();
+                    break;
 
-                    case Accessories.MotorL:
-                        if (motorL != null)
+                case Accessories.MotorL:
+                    if (motorL != null)
+                    {
+                        motorL.Speed = 0;
+                    }
+                    motorL.Dispose();
+                    break;
+
+                case Accessories.MotorR:
+                    if (motorR != null)
+                    {
+                        motorR.Speed = 0;
+                    }
+                    motorR.Dispose();
+                    break;
+
+                case Accessories.Motors:
+                    Disable(Accessories.MotorL);
+                    Disable(Accessories.MotorR);
+                    break;
+
+                case Accessories.ADC:
+                    //adc = null;
+                    adc.Dispose();
+                    break;
+
+                case Accessories.IR:
+                    ir.Dispose();
+                    break;
+
+                case Accessories.Sonar:
+                    sonar.Dispose();
+                    break;
+
+                case Accessories.LED:
+                    led.Dispose();
+                    break;
+
+                case Accessories.CPUTemp:
+                    cpuTemperature = null;
+                    break;
+
+                case Accessories.All:
+                    foreach (var item in Enum.GetValues(typeof(Accessories)))
+                    {
+                        if((Accessories)item != Accessories.All)
                         {
-                            motorL.Speed = 0;
+                            Disable((Accessories)item);
                         }
-                        motorL.Dispose();
-                        break;
+                    }
+                    break;
 
-                    case Accessories.MotorR:
-                        if (motorR != null)
-                        {
-                            motorR.Speed = 0;
-                        }
-                        motorR.Dispose();
-                        break;
-
-                    case Accessories.Motors:
-                        Disable(Accessories.MotorL);
-                        Disable(Accessories.MotorR);
-                        break;
-
-                    case Accessories.ADC:
-                        adc.Dispose();
-                        break;
-
-                    case Accessories.IR:
-                        ir.Dispose();
-                        break;
-
-                    case Accessories.Sonar:
-                        sonar.Dispose();
-                        break;
-
-                    case Accessories.LED:
-                        led.Dispose();
-                        break;
-
-                    case Accessories.CPUTemp:
-                        cpuTemperature = null;
-                        break;
-
-                    case Accessories.All:
-                        foreach (var item in Enum.GetValues(typeof(Accessories)))
-                        {
-                            if ((Accessories)item != Accessories.All)
-                            {
-                                Disable((Accessories)item);
-                            }
-                        }
-                        break;
-
-                    default:
-                        Console.WriteLine("Something went wrong (Disabling accessories)");
-                        break;
-                }
+                default:
+                    Console.WriteLine("Default case");
+                    break;
             }
+<<<<<<< Updated upstream
+=======
             catch (Exception ex)
             {
-                Debug.WriteLine($"Disabling accessory: {Enum.GetName(typeof(Accessories), accessory)} has failed.");
-                Debug.WriteLine($"Exception message: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Disabling accessory: {Enum.GetName(typeof(Accessories), accessory)} has failed.");
+                System.Diagnostics.Debug.WriteLine($"Exception message: {ex.Message}");
+>>>>>>> Stashed changes
 
-                Console.WriteLine($"Disabling accessory: {Enum.GetName(typeof(Accessories), accessory)} has failed.");
-                Console.WriteLine($"Exception message: {ex.Message}");
-            }
         }
+
+        #endregion
 
         #region Dispose
 

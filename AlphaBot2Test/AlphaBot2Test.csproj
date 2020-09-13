@@ -13,8 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\Iot.Device.Bindings\Iot.Device.Bindings.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\System.Device.Gpio\System.Device.Gpio.csproj" />
     <ProjectReference Include="..\AlphaBot2\AlphaBot2.csproj" />
   </ItemGroup>
 

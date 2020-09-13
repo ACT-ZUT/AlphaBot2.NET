@@ -6,17 +6,17 @@
     <Company>ACT Science Club</Company>
     <Platforms>AnyCPU</Platforms>
     <PackageId>AlphaBot2.NET</PackageId>
-    <AssemblyVersion>0.7.*</AssemblyVersion>
+    <AssemblyVersion>0.8.*</AssemblyVersion>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <Deterministic>false</Deterministic>
-    <Version>0.7.11-dev</Version>
+    <Version>0.8.0-dev</Version>
     <Authors>SaDiablo</Authors>
     <Product>AlphaBot2.NET</Product>
     <PackageTags>AlphaBot2 .NET Core RPi IoT Robot</PackageTags>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/ACT-ZUT/AlphaBot2.NET</RepositoryUrl>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <FileVersion>0.7.11.0</FileVersion>
+    <FileVersion>0.8.0.0</FileVersion>
     <RepositoryType>git</RepositoryType>
     <NeutralLanguage>en-US</NeutralLanguage>
     <Description>This package can be used to control Waveshare AlphaBot2 Pi robot</Description>
@@ -28,12 +28,15 @@
 
   <ItemGroup>
     <PackageReference Include="Emgu.CV" Version="4.2.0.3662" />
+    <PackageReference Include="Iot.Device.Bindings" Version="1.1.0-prerelease.20276.1" />
+    <PackageReference Include="System.Device.Gpio" Version="1.1.0-prerelease.20276.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\Iot.Device.Bindings\Iot.Device.Bindings.csproj" />
-    <ProjectReference Include="..\..\..\..\..\..\..\Git\iot\src\System.Device.Gpio\System.Device.Gpio.csproj" />
     <ProjectReference Include="..\Camera\Camera.csproj" />
+    <ProjectReference Include="..\IrReceiver\IrReceiver.csproj" />
+    <ProjectReference Include="..\Mpu6050\Mpu6050.csproj" />
+    <ProjectReference Include="..\Tlc1543\Tlc1543.csproj" />
     <ProjectReference Include="..\Ws2812b\Ws2812b.csproj" />
   </ItemGroup>
 
