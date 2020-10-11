@@ -100,6 +100,26 @@ namespace AlphaBot2
             return (speedL, speedR);
         }
 
+
+        public void Read()
+        {
+            int value0;
+            int value1;
+            int value2;
+            int value3;
+            int value4;
+            value0 = adc.Read(0);
+            value1 = adc.Read(1);
+            value2 = adc.Read(2);
+            value3 = adc.Read(3);
+            value4 = adc.Read(4);
+            //value0 = adc.ReadChannel((int)Tlc1543.Channel.A0);
+            //value1 = adc.ReadChannel((int)Tlc1543.Channel.A1);
+            //value2 = adc.ReadChannel((int)Tlc1543.Channel.A2);
+            //value3 = adc.ReadChannel((int)Tlc1543.Channel.A3);
+            //value4 = adc.ReadChannel((int)Tlc1543.Channel.A4);
+            Console.WriteLine($"0: {value0}, 1: {value1}, 2: {value2}, 3: {value3}, 4: {value4}");
+        }
         /// <summary>
         /// Function providing sensors readout
         /// and calculating position of 

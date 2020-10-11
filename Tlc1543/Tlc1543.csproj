@@ -4,6 +4,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <!--Disabling default items so samples source won't get build by the main library-->
     <EnableDefaultItems>false</EnableDefaultItems>
+    <Version>1.16.3</Version>
+    <FileVersion>1.16.3.0</FileVersion>
+    <AssemblyVersion>1.16.3.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>

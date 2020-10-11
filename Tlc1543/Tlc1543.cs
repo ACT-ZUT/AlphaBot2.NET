@@ -4,17 +4,10 @@
 
 using System;
 using System.Device;
-using System.Device.Gpio;
 using System.Device.Spi;
-using System.Device.I2c;
+using System.Device.Gpio;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Buffers.Binary;
-using System.Numerics;
-using System.Text;
-using System.Threading;
-
+using Iot.Device.Spi;
 using UnitsNet;
 
 namespace Iot.Device.Adc
@@ -36,10 +29,21 @@ namespace Iot.Device.Adc
         private readonly int _inputOutputClock;
         private readonly int _endOfConversion;
         private readonly int _channels = 11;
+        private readonly CommunicationProtocol _protocol;
         private bool _disposedValue;
         private GpioController _digital = new GpioController(PinNumberingScheme.Logical);
+        private object _spi;
         private int _lastValue;
         private List<int> _lastValues;
+        byte[] writeBuffer = new byte[2];
+        byte[] readBuffer = new byte[2];
+
+        /// <summary>
+        /// Any transitions of chipSelect are recognized as valid only if the level is maintained
+        /// for a setup time plus two falling edges of the internal clock
+        /// (1.425 µs) after the transition
+        /// </summary>
+        private TimeSpan _conversionTime = new TimeSpan(210);
 
         /// <summary>
         /// Last conversion result
@@ -94,40 +98,40 @@ namespace Iot.Device.Adc
         /// <param name="CS">Chip Select</param>
         /// <param name="DOUT">Data Out</param>
         /// <param name="IOCLK">I/O Clock</param>
-        public Tlc1543(int ADDR, int CS, int DOUT, int IOCLK)
-        {
-            _address = ADDR;
-            _chipSelect = CS;
-            _dataOut = DOUT;
-            _inputOutputClock = IOCLK;
-
-            _digital.OpenPin(_address, PinMode.Output);
-            _digital.OpenPin(_chipSelect, PinMode.Output);
-            _digital.OpenPin(_dataOut, PinMode.InputPullUp);
-            _digital.OpenPin(_inputOutputClock, PinMode.Output);
-        }
-
-        /// <summary>
-        /// Constructor for Tlc1543
-        /// </summary>
-        /// <param name="ADDR">Address</param>
-        /// <param name="CS">Chip Select</param>
-        /// <param name="DOUT">Data Out</param>
         /// <param name="EOC">End of Conversion</param>
-        /// <param name="IOCLK">I/O Clock</param>
-        public Tlc1543(int ADDR, int CS, int DOUT, int IOCLK, int EOC)
+        /// <param name="connectionSettings">Software or Hardware SPI connection settings</param>
+        public Tlc1543(int ADDR = -1, int CS = -1, int DOUT = -1, int IOCLK = -1, int EOC = -1, SpiConnectionSettings connectionSettings = null)
         {
             _address = ADDR;
             _chipSelect = CS;
             _dataOut = DOUT;
-            _endOfConversion = EOC;
             _inputOutputClock = IOCLK;
+            _endOfConversion = EOC;
 
-            _digital.OpenPin(_address, PinMode.Output);
-            _digital.OpenPin(_chipSelect, PinMode.Output);
-            _digital.OpenPin(_dataOut, PinMode.InputPullUp);
-            _digital.OpenPin(_endOfConversion, PinMode.InputPullUp);
-            _digital.OpenPin(_inputOutputClock, PinMode.Output);
+            if (connectionSettings != null)
+            {
+                _spi = new SoftwareSpi(11, 9, 10, 8, connectionSettings);
+                _protocol = CommunicationProtocol.SoftSpi;
+            }
+            if (connectionSettings != null & ADDR == -1)
+            {
+                _spi = SpiDevice.Create(connectionSettings);
+                _protocol = CommunicationProtocol.HardSpi;
+            }
+            else
+            {
+                _digital.OpenPin(_address, PinMode.Output);
+                _digital.OpenPin(_chipSelect, PinMode.Output);
+                _digital.OpenPin(_dataOut, PinMode.InputPullUp);
+                _digital.OpenPin(_inputOutputClock, PinMode.Output);
+                if (_endOfConversion > -1)
+                {
+                    _digital.OpenPin(_endOfConversion, PinMode.InputPullUp);
+                }
+                _protocol = CommunicationProtocol.Gpio;
+            }
+            
+            
         }
 
         #endregion
@@ -179,7 +183,74 @@ namespace Iot.Device.Adc
             values.Add(Read((int)ChargeChannel));
             return values;
         }
+        /// <summary>
+        /// Reads sensor value in Fast Mode 1 (10 clock transfer using !chipSelect)
+        /// <remarks>
+        /// <br>1 cycle used - gets data on second call of this method</br>
+        /// <br>First cycle: Ask for value on the channel</br>
+        /// </remarks>
+        /// </summary>
+        /// <param name="channelNumber">Channel to read</param>
+        /// <returns>10 bit value corresponding to relative voltage level on channel</returns>
+        public int Read(int channelNumber)
+        {
+            int value = 0;
+            switch (_protocol)
+            {
+                case CommunicationProtocol.Gpio:
+                    _digital.Write(_chipSelect, 0);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        if (i < 4)
+                        {
+                            // send 4-bit Address
+                            if ((channelNumber >> (3 - i) & 0x01) != 0)
+                            {
+                                _digital.Write(_address, 1);
+                            }
+                            else
+                            {
+                                _digital.Write(_address, 0);
+                            }
+                        }
 
+                        // read 10-bit data
+                        value <<= 1;
+                        if (_digital.Read(_dataOut) == PinValue.High)
+                        {
+                            value |= 0x01;
+                        }
+
+                        _digital.Write(_inputOutputClock, 1);
+                        _digital.Write(_inputOutputClock, 0);
+                    }
+                    _digital.Write(_chipSelect, 1);
+                    break;
+                case CommunicationProtocol.SoftSpi:
+                    writeBuffer = new byte[2]{ Convert.ToByte((channelNumber & 0b0000_1111) << 4), 0 };
+                    readBuffer = new byte[2];
+                    var SoftSpi = (SoftwareSpi)_spi;
+                    SoftSpi.TransferFullDuplex(writeBuffer, readBuffer);
+                    value = (readBuffer[0] & 0b1111_1111) << 2;
+                    value |= (readBuffer[1] & 0b1100_0000) >> 6;
+                    value &= 0b0011_1111_1111;
+                    break;
+                case CommunicationProtocol.HardSpi:
+                    writeBuffer = new byte[2] { Convert.ToByte((channelNumber & 0b0000_1111) << 4), 0 };
+                    readBuffer = new byte[2];
+                    var HardSpi = (SpiDevice)_spi;
+                    HardSpi.TransferFullDuplex(writeBuffer, readBuffer);
+                    value = (readBuffer[0] & 0b1111_1111) << 2;
+                    value |= (readBuffer[1] & 0b1100_0000) >> 6;
+                    value &= 0b0011_1111_1111;
+                    break;
+                default:
+                    break;
+            }
+            DelayHelper.Delay(_conversionTime, false);
+            return value;
+        }
+        /*
         /// <summary>
         /// Mode 1:
         /// Fast mode,
@@ -188,19 +259,18 @@ namespace Iot.Device.Adc
         /// </summary>
         /// <param name="channelNumber">Channel to read</param>
         /// <returns></returns>
+        /// 
         public int Read(int channelNumber)
         {
             int value = 0;
             _digital.Write(_chipSelect, 0);
-            /*
-             * Setup time, CS low before clocking in first address bit
-             * 1.425uS between CS => 0 and first ADDR
-             * probably can omit that due to for loop and if condition
-             * todo: check how much time it takes from
-             * falling slope of CS (voltage less than 0.8V)
-             * to first rising slope of ADDR(minimum of 2V)
-             * on osciloscope to check how much time it takes on RPi
-             */
+            // Setup time, CS low before clocking in first address bit
+            // 1.425uS between CS => 0 and first ADDR
+            // probably can omit that due to for loop and if condition
+            // todo: check how much time it takes from
+            // falling slope of CS (voltage less than 0.8V)
+            // to first rising slope of ADDR(minimum of 2V)
+            // on osciloscope to check how much time it takes on RPi
             DelayHelper.DelayMicroseconds(1, false);
             for (int i = 0; i < 10; i++)
             {
@@ -237,9 +307,29 @@ namespace Iot.Device.Adc
             return value;
         }
 
+        */
+
         #endregion
 
         #region Enums
+
+        public enum CommunicationProtocol
+        {
+            /// <summary>
+            /// Gpio communication protocol.
+            /// </summary>
+            Gpio,
+
+            /// <summary>
+            /// Spi communication protocol.
+            /// </summary>
+            SoftSpi,
+
+            /// <summary>
+            /// Spi communication protocol.
+            /// </summary>
+            HardSpi,
+        }
 
         /// <summary>
         /// Available Channels to poll from on Tlc1543

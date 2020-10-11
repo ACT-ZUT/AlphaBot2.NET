@@ -9,16 +9,16 @@
     <AssemblyVersion>0.8.*</AssemblyVersion>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     <Deterministic>false</Deterministic>
-    <Version>0.8.0-dev</Version>
+    <Version>0.8.8-dev</Version>
     <Authors>SaDiablo</Authors>
     <Product>AlphaBot2.NET</Product>
     <PackageTags>AlphaBot2 .NET Core RPi IoT Robot</PackageTags>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/ACT-ZUT/AlphaBot2.NET</RepositoryUrl>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <FileVersion>0.8.0.0</FileVersion>
+    <FileVersion>0.8.8.0</FileVersion>
     <RepositoryType>git</RepositoryType>
-    <NeutralLanguage>en-US</NeutralLanguage>
+    <NeutralLanguage></NeutralLanguage>
     <Description>This package can be used to control Waveshare AlphaBot2 Pi robot</Description>
   </PropertyGroup>
 
